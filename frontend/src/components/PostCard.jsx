@@ -32,7 +32,7 @@ export default function PostCard({ post, recipe }) {
 
         {/* Dual camera photo */}
         <div
-          className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden bg-gray-100 cursor-pointer shadow-sm"
+          className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden bg-gray-100 cursor-pointer"
           onClick={() => setShowSelfie(!showSelfie)}
         >
           <img
@@ -40,7 +40,7 @@ export default function PostCard({ post, recipe }) {
             alt="Plat"
             className="w-full h-full object-cover transition-all duration-300"
           />
-          <div className="absolute top-3 left-3 w-[28%] aspect-square rounded-2xl overflow-hidden border-[3px] border-black/80 shadow-lg">
+          <div className="absolute top-3 left-3 w-[28%] aspect-square rounded-xl overflow-hidden border-[3px] border-black/80">
             <img
               src={showSelfie ? post.mainImage : post.selfieImage}
               alt="Selfie"
@@ -56,13 +56,13 @@ export default function PostCard({ post, recipe }) {
             {post.reactions.map((r, i) => (
               <button
                 key={i}
-                className="flex items-center gap-1 bg-gray-100 hover:bg-emerald-50 rounded-full px-3 py-1.5 transition-colors"
+                className="flex items-center gap-1 bg-gray-100 hover:bg-blue-50 rounded-full px-3 py-1.5 transition-colors"
               >
                 <span className="text-sm">{r.emoji}</span>
                 <span className="text-xs text-gray-500 font-medium">{r.count}</span>
               </button>
             ))}
-            <button className="w-8 h-8 rounded-full bg-gray-100 hover:bg-emerald-50 flex items-center justify-center transition-colors">
+            <button className="w-8 h-8 rounded-full bg-gray-100 hover:bg-blue-50 flex items-center justify-center transition-colors">
               <FontAwesomeIcon icon={faFaceSmile} className="text-sm text-gray-400" />
             </button>
           </div>
@@ -71,7 +71,7 @@ export default function PostCard({ post, recipe }) {
           {recipe && (
             <button
               onClick={() => setShowRecipe(true)}
-              className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-full px-3 py-1.5 text-xs font-medium transition-colors"
+              className="flex items-center gap-1.5 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-full px-3 py-1.5 text-xs font-medium transition-colors"
             >
               <FontAwesomeIcon icon={faUtensils} className="text-[10px]" />
               Recette
@@ -107,7 +107,7 @@ export default function PostCard({ post, recipe }) {
             </button>
 
             {/* Recipe content */}
-            <p className="text-xs text-emerald-600 font-semibold uppercase tracking-wider mb-1">
+            <p className="text-xs text-blue-600 font-semibold uppercase tracking-wider mb-1">
               Recette de la semaine
             </p>
             <h3 className="text-xl font-bold text-gray-900 mb-3">
@@ -116,11 +116,11 @@ export default function PostCard({ post, recipe }) {
 
             <div className="flex items-center gap-4 mb-4 text-sm text-gray-500">
               <span className="flex items-center gap-1.5">
-                <FontAwesomeIcon icon={faClock} className="text-emerald-500 text-xs" />
+                <FontAwesomeIcon icon={faClock} className="text-blue-500 text-xs" />
                 {recipe.time}
               </span>
               <span className="flex items-center gap-1.5">
-                <FontAwesomeIcon icon={faDumbbell} className="text-emerald-500 text-xs" />
+                <FontAwesomeIcon icon={faDumbbell} className="text-blue-500 text-xs" />
                 {recipe.difficulty}
               </span>
             </div>
@@ -130,7 +130,7 @@ export default function PostCard({ post, recipe }) {
               {recipe.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="bg-emerald-50 text-emerald-700 text-xs font-medium px-3 py-1 rounded-full"
+                  className="bg-blue-50 text-blue-700 text-xs font-medium px-3 py-1 rounded-full"
                 >
                   {tag}
                 </span>

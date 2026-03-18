@@ -110,3 +110,75 @@ export const samplePosts = [
     time: "Il y a 12h",
   },
 ];
+
+export const profileUser = {
+  name: "Toi",
+  avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop&crop=face",
+  bio: "Etudiant foodie en mission healthy",
+  stats: { plats: 12, amis: 24, semaines: 6 },
+};
+
+export const profilePosts = [
+  {
+    id: 101,
+    user: { name: "Toi", avatar: profileUser.avatar },
+    recipeId: "r1",
+    mainImage: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=800&fit=crop",
+    selfieImage: profileUser.avatar,
+    caption: "Ma meilleure version du bowl, avec du tofu grille en plus !",
+    reactions: [
+      { emoji: "🔥", count: 8 },
+      { emoji: "💪", count: 14 },
+    ],
+    time: "15 mars",
+  },
+  {
+    id: 102,
+    user: { name: "Toi", avatar: profileUser.avatar },
+    recipeId: "r2",
+    mainImage: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&h=800&fit=crop",
+    selfieImage: profileUser.avatar,
+    caption: "Un peu trop de miso mais le resultat etait top 🐟",
+    reactions: [
+      { emoji: "😋", count: 11 },
+      { emoji: "👨‍🍳", count: 6 },
+    ],
+    time: "12 mars",
+  },
+  {
+    id: 103,
+    user: { name: "Toi", avatar: profileUser.avatar },
+    recipeId: "r3",
+    mainImage: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600&h=800&fit=crop",
+    selfieImage: profileUser.avatar,
+    caption: "Wrap express entre deux cours, pret en 10 minutes 🌯",
+    reactions: [
+      { emoji: "⚡", count: 9 },
+      { emoji: "😍", count: 7 },
+    ],
+    time: "8 mars",
+  },
+  {
+    id: 104,
+    user: { name: "Toi", avatar: profileUser.avatar },
+    recipeId: "r1",
+    mainImage: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=800&fit=crop",
+    selfieImage: profileUser.avatar,
+    caption: "Premier essai de poke bowl, je suis fan 🍣",
+    reactions: [
+      { emoji: "🤩", count: 19 },
+      { emoji: "🥢", count: 5 },
+    ],
+    time: "3 mars",
+  },
+];
+
+export const calendarData = {
+  "2026-03-15": { recipeName: "Buddha Bowl Maison", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200&h=200&fit=crop" },
+  "2026-03-12": { recipeName: "Saumon Miso Express", image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=200&h=200&fit=crop" },
+  "2026-03-08": { recipeName: "Wrap Poulet du Midi", image: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=200&h=200&fit=crop" },
+  "2026-03-03": { recipeName: "Poke Bowl Saumon", image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&h=200&fit=crop" },
+  "2026-02-25": { recipeName: "Salade Cesar Revisitee", image: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=200&h=200&fit=crop" },
+  "2026-02-20": { recipeName: "Curry de Legumes", image: "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=200&h=200&fit=crop" },
+  "2026-02-14": { recipeName: "Buddha Bowl Special", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200&h=200&fit=crop" },
+};

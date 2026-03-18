@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import FriendsPage from "./pages/FriendsPage";
 import CreatorsPage from "./pages/CreatorsPage";
 import ProfilePage from "./pages/ProfilePage";
+import CalendarPage from "./pages/CalendarPage";
 
 function App() {
   const [activeTab, setActiveTab] = useState("friends");
@@ -12,8 +13,8 @@ function App() {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-white/70 backdrop-blur-xl px-5 py-4 flex items-center justify-center">
         <h1 className="text-xl font-extrabold tracking-tight">
-          <span className="text-emerald-600">bon</span>
-          <span className="text-gray-800">app&apos;</span>
+          <span className="text-blue-500">bon</span>
+          <span className="text-slate-800">app&apos;</span>
         </h1>
       </header>
 
@@ -21,6 +22,7 @@ function App() {
       <main className="pb-24">
         {activeTab === "friends" && <FriendsPage />}
         {activeTab === "creators" && <CreatorsPage />}
+        {activeTab === "calendar" && <CalendarPage />}
         {activeTab === "profile" && <ProfilePage />}
       </main>
 

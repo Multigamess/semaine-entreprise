@@ -3,7 +3,7 @@ import { faClock, faDumbbell } from "@fortawesome/free-solid-svg-icons";
 
 export default function RecipeCard({ recipe }) {
   return (
-    <div className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden shadow-md flex-shrink-0">
+    <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden flex-shrink-0">
       {/* Background image */}
       <img
         src={recipe.image}
@@ -19,7 +19,7 @@ export default function RecipeCard({ recipe }) {
         {recipe.tags.map((tag) => (
           <span
             key={tag}
-            className="bg-white/90 backdrop-blur-sm text-emerald-700 text-[11px] font-semibold px-2.5 py-1 rounded-full"
+            className="bg-amber-100/90 backdrop-blur-sm text-amber-800 text-[11px] font-semibold px-2.5 py-1 rounded-full"
           >
             {tag}
           </span>

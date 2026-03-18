@@ -31,7 +31,7 @@ export default function WeeklyRecipes({ recipes }) {
 
       {/* Carousel */}
       <div
-        className="overflow-hidden rounded-3xl"
+        className="overflow-hidden rounded-2xl"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
@@ -55,8 +55,8 @@ export default function WeeklyRecipes({ recipes }) {
             onClick={() => goTo(i)}
             className={`h-2 rounded-full transition-all duration-300 ${
               i === current
-                ? "w-6 bg-emerald-500"
-                : "w-2 bg-gray-300"
+                ? "w-6 bg-blue-500"
+                : "w-2 bg-slate-300"
             }`}
           />
         ))}

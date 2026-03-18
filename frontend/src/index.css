@@ -2,7 +2,8 @@
 
 body {
   margin: 0;
-  background-color: #f9fafb;
+  background-color: #FFFBF0;
+  font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
