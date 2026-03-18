@@ -25,13 +25,13 @@ export default function WeeklyRecipes({ recipes }) {
 
   return (
     <section className="px-5 pt-4 pb-2">
-      <h2 className="text-base font-bold text-gray-800 mb-3">
+      <h2 className="text-sm font-semibold text-gray-900 mb-3">
         Tes recettes de la semaine
       </h2>
 
       {/* Carousel */}
       <div
-        className="overflow-hidden rounded-2xl"
+        className="overflow-hidden rounded-xl"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
@@ -48,15 +48,15 @@ export default function WeeklyRecipes({ recipes }) {
       </div>
 
       {/* Dots */}
-      <div className="flex justify-center gap-2 mt-3">
+      <div className="flex justify-center gap-1.5 mt-3">
         {recipes.map((_, i) => (
           <button
             key={i}
             onClick={() => goTo(i)}
-            className={`h-2 rounded-full transition-all duration-300 ${
+            className={`h-1.5 rounded-full transition-all duration-300 ${
               i === current
-                ? "w-6 bg-blue-500"
-                : "w-2 bg-slate-300"
+                ? "w-5 bg-blue-500"
+                : "w-1.5 bg-gray-200"
             }`}
           />
         ))}

@@ -3,7 +3,7 @@ import { faClock, faDumbbell } from "@fortawesome/free-solid-svg-icons";
 
 export default function RecipeCard({ recipe }) {
   return (
-    <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden flex-shrink-0">
+    <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden flex-shrink-0">
       {/* Background image */}
       <img
         src={recipe.image}
@@ -12,14 +12,14 @@ export default function RecipeCard({ recipe }) {
       />
 
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
       {/* Tags top */}
-      <div className="absolute top-4 left-4 flex flex-wrap gap-1.5">
+      <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
         {recipe.tags.map((tag) => (
           <span
             key={tag}
-            className="bg-amber-100/90 backdrop-blur-sm text-amber-800 text-[11px] font-semibold px-2.5 py-1 rounded-full"
+            className="bg-white/80 backdrop-blur-sm text-gray-700 text-[10px] font-medium px-2 py-0.5 rounded-full"
           >
             {tag}
           </span>
@@ -27,17 +27,17 @@ export default function RecipeCard({ recipe }) {
       </div>
 
       {/* Bottom info */}
-      <div className="absolute bottom-0 left-0 right-0 p-5">
-        <h3 className="text-white text-lg font-bold leading-tight mb-2">
+      <div className="absolute bottom-0 left-0 right-0 p-4">
+        <h3 className="text-white text-base font-bold leading-tight mb-1.5">
           {recipe.name}
         </h3>
-        <div className="flex items-center gap-4 text-white/80 text-sm">
-          <span className="flex items-center gap-1.5">
-            <FontAwesomeIcon icon={faClock} className="text-xs" />
+        <div className="flex items-center gap-3 text-white/70 text-xs">
+          <span className="flex items-center gap-1">
+            <FontAwesomeIcon icon={faClock} className="text-[10px]" />
             {recipe.time}
           </span>
-          <span className="flex items-center gap-1.5">
-            <FontAwesomeIcon icon={faDumbbell} className="text-xs" />
+          <span className="flex items-center gap-1">
+            <FontAwesomeIcon icon={faDumbbell} className="text-[10px]" />
             {recipe.difficulty}
           </span>
         </div>
