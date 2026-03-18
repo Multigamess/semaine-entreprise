@@ -10,14 +10,15 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50 max-w-lg mx-auto relative">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 py-3">
-        <h1 className="text-2xl font-bold text-orange-500 tracking-tight">
-          bonapp&apos;
+      <header className="sticky top-0 z-40 bg-white/70 backdrop-blur-xl px-5 py-4 flex items-center justify-center">
+        <h1 className="text-xl font-extrabold tracking-tight">
+          <span className="text-emerald-600">bon</span>
+          <span className="text-gray-800">app&apos;</span>
         </h1>
       </header>
 
       {/* Content */}
-      <main className="pb-20">
+      <main className="pb-24">
         {activeTab === "friends" && <FriendsPage />}
         {activeTab === "creators" && <CreatorsPage />}
         {activeTab === "profile" && <ProfilePage />}
