@@ -83,37 +83,38 @@ body {
 
 /* --- Tap & Press --- */
 .tap-scale {
-  transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
   -webkit-tap-highlight-color: transparent;
+  will-change: transform;
 }
 .tap-scale:active {
-  transform: scale(0.93);
+  transform: scale(0.92);
 }
 
 /* --- Fade In Up (staggered via --delay) --- */
 @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(18px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 .animate-fade-in-up {
-  animation: fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fade-in-up 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: var(--delay, 0ms);
 }
 
 /* --- Staggered list items --- */
 .stagger-item {
   opacity: 0;
-  animation: fade-in-up 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: var(--stagger, 0ms);
 }
 
 /* --- Scale in (for overlays, modals) --- */
 @keyframes scale-in {
-  from { opacity: 0; transform: scale(0.9); }
+  from { opacity: 0; transform: scale(0.88); }
   to { opacity: 1; transform: scale(1); }
 }
 .animate-scale-in {
-  animation: scale-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: scale-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
 /* --- Slide up (bottom sheets) --- */
@@ -122,26 +123,26 @@ body {
   to { transform: translateY(0); opacity: 1; }
 }
 .animate-slide-up {
-  animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: slide-up 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* --- Backdrop fade --- */
 @keyframes backdrop-fade {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from { opacity: 0; backdrop-filter: blur(0px); }
+  to { opacity: 1; backdrop-filter: blur(4px); }
 }
 .animate-backdrop {
-  animation: backdrop-fade 0.25s ease-out both;
+  animation: backdrop-fade 0.3s ease-out both;
 }
 
 /* --- Pop / Bounce (reactions, buttons) --- */
 @keyframes pop-in {
   0% { transform: scale(0); opacity: 0; }
-  60% { transform: scale(1.15); opacity: 1; }
+  60% { transform: scale(1.12); opacity: 1; }
   100% { transform: scale(1); opacity: 1; }
 }
 .animate-pop-in {
-  animation: pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
   animation-delay: var(--delay, 0ms);
 }
 
@@ -167,10 +168,10 @@ body {
 /* --- Gentle pulse (glow effects) --- */
 @keyframes gentle-pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.02); }
+  50% { opacity: 0.7; transform: scale(1.04); }
 }
 .animate-gentle-pulse {
-  animation: gentle-pulse 2s ease-in-out infinite;
+  animation: gentle-pulse 2.5s ease-in-out infinite;
 }
 
 /* --- Shimmer loading --- */
@@ -187,12 +188,12 @@ body {
 /* --- Heart burst on double tap --- */
 @keyframes heart-burst {
   0% { transform: scale(0); opacity: 1; }
-  40% { transform: scale(1.4); opacity: 1; }
-  70% { transform: scale(1.1); opacity: 0.8; }
+  30% { transform: scale(1.5); opacity: 1; }
+  60% { transform: scale(1.1); opacity: 0.9; }
   100% { transform: scale(1); opacity: 0; }
 }
 .animate-heart-burst {
-  animation: heart-burst 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: heart-burst 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 /* --- Confetti pop (publish success) --- */
@@ -207,11 +208,11 @@ body {
 
 /* --- Camera overlay --- */
 @keyframes camera-open {
-  from { opacity: 0; transform: scale(1.08); }
+  from { opacity: 0; transform: scale(1.06); }
   to { opacity: 1; transform: scale(1); }
 }
 .animate-camera-open {
-  animation: camera-open 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: camera-open 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes shutter-flash {
@@ -219,24 +220,24 @@ body {
   100% { opacity: 0; }
 }
 .animate-shutter-flash {
-  animation: shutter-flash 0.3s ease-out forwards;
+  animation: shutter-flash 0.25s ease-out forwards;
 }
 
 /* --- Image reveal (fade in when loaded) --- */
 @keyframes img-reveal {
-  from { opacity: 0; transform: scale(1.02); }
+  from { opacity: 0; transform: scale(1.03); }
   to { opacity: 1; transform: scale(1); }
 }
 .animate-img-reveal {
-  animation: img-reveal 0.4s ease-out both;
+  animation: img-reveal 0.45s ease-out both;
 }
 
 /* --- Emoji reaction bounce --- */
 @keyframes emoji-bounce {
   0% { transform: scale(1); }
-  30% { transform: scale(1.3) rotate(-5deg); }
-  50% { transform: scale(0.9) rotate(3deg); }
-  70% { transform: scale(1.1) rotate(-2deg); }
+  25% { transform: scale(1.35) rotate(-8deg); }
+  50% { transform: scale(0.85) rotate(5deg); }
+  75% { transform: scale(1.1) rotate(-2deg); }
   100% { transform: scale(1) rotate(0deg); }
 }
 .animate-emoji-bounce {
@@ -260,6 +261,57 @@ body {
 }
 .animate-wiggle {
   animation: wiggle 0.5s ease-in-out;
+}
+
+/* --- Smooth card hover lift --- */
+@keyframes card-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-card-enter {
+  animation: card-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+/* --- Pill badge slide in --- */
+@keyframes pill-in {
+  from { opacity: 0; transform: translateX(-8px) scale(0.9); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+.animate-pill-in {
+  animation: pill-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+/* --- Soft count up --- */
+@keyframes count-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+.animate-count-pop {
+  animation: count-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* --- Smooth reveal from below (for sections) --- */
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-reveal-up {
+  animation: reveal-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+/* --- Gradient line shimmer --- */
+@keyframes gradient-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.animate-gradient-flow {
+  background-size: 200% 200%;
+  animation: gradient-flow 4s ease infinite;
 }
 
 /* ============================================
@@ -331,7 +383,26 @@ button, a {
   transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* Smooth color transitions */
+/* Smooth color transitions on everything */
 * {
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth rounded corners on photo containers */
+.rounded-2xl, .rounded-\[2rem\] {
+  transition: border-radius 0.3s ease;
+}
+
+/* GPU acceleration for animated elements */
+.tap-scale, .stagger-item, .animate-pop-in, .animate-fade-in-up,
+.animate-scale-in, .animate-slide-up, .animate-card-enter {
+  will-change: transform, opacity;
+}
+
+/* Smooth focus rings */
+*:focus-visible {
+  outline: 2px solid #005b52;
+  outline-offset: 2px;
+  border-radius: 8px;
+  transition: outline-offset 0.15s ease;
 }

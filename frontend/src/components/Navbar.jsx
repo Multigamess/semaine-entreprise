@@ -37,8 +37,7 @@ export default function Navbar({ activeTab, onTabChange, onPostClick }) {
         <div className="absolute -top-16 left-1/2 -translate-x-1/2 z-50">
           <button
             onClick={onPostClick}
-            className="w-14 h-14 rounded-full bg-[#005b52] text-white shadow-lg shadow-[#005b52]/25 flex items-center justify-center tap-scale hover:shadow-[#005b52]/40 animate-float"
-            style={{ "--delay": "0ms" }}
+            className="w-14 h-14 rounded-full bg-[#005b52] text-white shadow-lg shadow-[#005b52]/25 flex items-center justify-center tap-scale hover:shadow-[#005b52]/40"
           >
             <FontAwesomeIcon icon={faPlus} className="text-xl" />
           </button>

@@ -3,6 +3,13 @@ import { profileUser } from "../data/sampleData";
 
 const BUCKET = "post-images";
 
+// Log connection status on load
+if (supabase) {
+  console.log("[bonapp] Supabase connected:", supabase.supabaseUrl);
+} else {
+  console.warn("[bonapp] Supabase not configured — using sample data");
+}
+
 /**
  * Convert a base64 data URL to a Blob
  */
@@ -37,42 +44,60 @@ function timeAgo(dateString) {
 async function uploadImage(base64DataUrl) {
   if (!supabase) return null;
 
-  const blob = base64ToBlob(base64DataUrl);
-  const ext = blob.type === "image/png" ? "png" : "jpg";
-  const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-  const filePath = `posts/${fileName}`;
+  try {
+    const blob = base64ToBlob(base64DataUrl);
+    const ext = blob.type === "image/png" ? "png" : "jpg";
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const filePath = `posts/${fileName}`;
 
-  const { error } = await supabase.storage
-    .from(BUCKET)
-    .upload(filePath, blob, { contentType: blob.type, upsert: false });
+    console.log(`[bonapp] Uploading image to ${BUCKET}/${filePath} (${(blob.size / 1024).toFixed(0)}KB)`);
 
-  if (error) {
-    console.error("Image upload failed:", error.message);
+    const { error } = await supabase.storage
+      .from(BUCKET)
+      .upload(filePath, blob, { contentType: blob.type, upsert: false });
+
+    if (error) {
+      console.error("[bonapp] Image upload failed:", error.message, error);
+      return null;
+    }
+
+    const { data } = supabase.storage.from(BUCKET).getPublicUrl(filePath);
+    console.log("[bonapp] Image uploaded:", data.publicUrl);
+    return data.publicUrl;
+  } catch (err) {
+    console.error("[bonapp] Upload exception:", err);
     return null;
   }
-
-  const { data } = supabase.storage.from(BUCKET).getPublicUrl(filePath);
-  return data.publicUrl;
 }
 
 /**
  * Create a post in Supabase
  * Uploads both images then inserts a row in the posts table
+ * Falls back to base64 storage if image upload fails
  * Returns the created post in frontend format, or null on failure
  */
 export async function createPost({ mainImage, selfieImage, caption, recipeId }) {
-  if (!supabase) return null;
+  if (!supabase) {
+    console.warn("[bonapp] Cannot create post — Supabase not configured");
+    return null;
+  }
 
   try {
-    // Upload both images in parallel
+    console.log("[bonapp] Creating post...");
+
+    // Try to upload both images in parallel
     const [mainUrl, selfieUrl] = await Promise.all([
       uploadImage(mainImage),
       uploadImage(selfieImage),
     ]);
 
+    // Use uploaded URLs, or fall back to base64 data URLs for MVP
+    const finalMainUrl = mainUrl || mainImage;
+    const finalSelfieUrl = selfieUrl || selfieImage;
+
     if (!mainUrl || !selfieUrl) {
-      console.error("Failed to upload one or both images");
-      return null;
+      console.warn("[bonapp] Storage upload failed — falling back to base64 in DB");
+      console.warn("[bonapp] Check: 1) Bucket 'post-images' exists  2) Bucket is public  3) Storage policies allow insert");
     }
 
     const { data, error } = await supabase
@@ -81,21 +106,23 @@ export async function createPost({ mainImage, selfieImage, caption, recipeId }) 
         user_name: "Toi",
         user_avatar: profileUser.avatar,
         recipe_id: recipeId || null,
-        main_image_url: mainUrl,
-        selfie_image_url: selfieUrl,
+        main_image_url: finalMainUrl,
+        selfie_image_url: finalSelfieUrl,
         caption: caption || "",
       })
       .select()
       .single();
 
     if (error) {
-      console.error("Post insert failed:", error.message);
+      console.error("[bonapp] Post insert failed:", error.message, error);
+      console.error("[bonapp] Check: 1) Table 'posts' exists  2) RLS policies allow insert  3) Column names match");
       return null;
     }
 
+    console.log("[bonapp] Post saved! ID:", data.id);
     return rowToPost(data);
   } catch (err) {
-    console.error("createPost error:", err);
+    console.error("[bonapp] createPost error:", err);
     return null;
   }
 }
@@ -108,6 +135,7 @@ export async function fetchPosts() {
   if (!supabase) return [];
 
   try {
+    console.log("[bonapp] Fetching posts...");
     const { data, error } = await supabase
       .from("posts")
       .select("*")
@@ -115,13 +143,14 @@ export async function fetchPosts() {
       .limit(50);
 
     if (error) {
-      console.error("Fetch posts failed:", error.message);
+      console.error("[bonapp] Fetch posts failed:", error.message, error);
       return [];
     }
 
+    console.log(`[bonapp] Loaded ${(data || []).length} posts from DB`);
     return (data || []).map(rowToPost);
   } catch (err) {
-    console.error("fetchPosts error:", err);
+    console.error("[bonapp] fetchPosts error:", err);
     return [];
   }
 }
