@@ -187,7 +187,7 @@ export default function CreatorProfilePage({ creator, onBack }) {
                 {recipe && (
                   <button
                     onClick={() => setShowRecipe(post.recipeId)}
-                    className="flex items-center gap-1.5 text-[#005b52] border border-[#9fc031]/30 hover:bg-[#9fc031]/10 rounded-full px-3 py-1 text-xs font-medium transition-colors"
+                    className="flex items-center gap-1.5 text-[#005b52] border border-[#005b52]/30 hover:bg-[#005b52]/10 rounded-full px-3 py-1 text-xs font-medium transition-colors"
                   >
                     <FontAwesomeIcon icon={faUtensils} className="text-[10px]" />
                     Recette

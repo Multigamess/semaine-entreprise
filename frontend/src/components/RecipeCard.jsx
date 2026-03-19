@@ -71,7 +71,7 @@ export default function RecipeCard({ recipe, flipped, onFlip }) {
 
             <div className="flex flex-wrap gap-1.5 mb-4">
               {recipe.tags.map((tag) => (
-                <span key={tag} className="text-[10px] font-medium px-2.5 py-1 rounded-full bg-[#9fc031]/10 text-[#005b52]">
+                <span key={tag} className="text-[10px] font-medium px-2.5 py-1 rounded-full bg-[#005b52]/10 text-[#005b52]">
                   {tag}
                 </span>
               ))}
@@ -81,7 +81,7 @@ export default function RecipeCard({ recipe, flipped, onFlip }) {
             <div className="space-y-1.5">
               {recipe.ingredients.map((ing, i) => (
                 <div key={i} className="flex items-center gap-2 text-sm text-gray-600">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#9fc031] flex-shrink-0" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#005b52] flex-shrink-0" />
                   {ing}
                 </div>
               ))}

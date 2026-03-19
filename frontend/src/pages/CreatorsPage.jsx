@@ -46,7 +46,7 @@ function CreatorPostReactions({ likes }) {
             onClick={() => handleTap(i)}
             className={`flex items-center gap-1 rounded-full px-2 py-1 tap-scale ${
               isActive
-                ? "bg-[#9fc031]/10 border border-[#9fc031]/30"
+                ? "bg-[#005b52]/10 border border-[#005b52]/30"
                 : "bg-gray-50 border border-transparent"
             }`}
             style={{ transition: "background-color 0.25s ease, border-color 0.25s ease" }}
@@ -88,7 +88,7 @@ export default function CreatorsPage({ onSelectCreator }) {
             >
               <div className="flex items-center gap-3 mb-3">
                 <button onClick={() => onSelectCreator(creator.id)} className="flex items-center gap-3 flex-1 text-left tap-scale">
-                  <img src={creator.avatar} alt={creator.name} className="w-9 h-9 rounded-full object-cover ring-2 ring-[#9fc031]/15" />
+                  <img src={creator.avatar} alt={creator.name} className="w-9 h-9 rounded-full object-cover ring-2 ring-[#005b52]/15" />
                   <div className="flex-1">
                     <div className="flex items-center gap-1.5">
                       <p className="text-sm font-semibold text-gray-800">{creator.name}</p>
@@ -108,7 +108,7 @@ export default function CreatorsPage({ onSelectCreator }) {
                 {recipe && (
                   <button
                     onClick={() => setShowRecipe(post.recipeId)}
-                    className="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium tap-scale text-[#005b52] border border-[#9fc031]/30 hover:bg-[#9fc031]/10"
+                    className="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium tap-scale text-[#005b52] border border-[#005b52]/30 hover:bg-[#005b52]/10"
                   >
                     <FontAwesomeIcon icon={faUtensils} className="text-[10px]" />
                     Recette
@@ -150,7 +150,7 @@ export default function CreatorsPage({ onSelectCreator }) {
 
             <div className="flex flex-wrap gap-1.5 mb-4">
               {activeRecipe.tags.map((tag, i) => (
-                <span key={tag} className="bg-[#9fc031]/10 text-[#005b52] border border-[#9fc031]/20 text-xs font-medium px-2.5 py-1 rounded-full animate-pop-in" style={{ "--delay": `${i * 40}ms` }}>{tag}</span>
+                <span key={tag} className="bg-[#005b52]/10 text-[#005b52] border border-[#005b52]/20 text-xs font-medium px-2.5 py-1 rounded-full animate-pop-in" style={{ "--delay": `${i * 40}ms` }}>{tag}</span>
               ))}
             </div>
 

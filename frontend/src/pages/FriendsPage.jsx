@@ -23,7 +23,7 @@ export default function FriendsPage({ hasPosted, userPost, dbPosts = [], onPostC
 
       {/* Motivation banner */}
       <div
-        className="mx-5 mt-3 mb-1 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-[#9fc031]/10 to-[#dbf226]/10 border border-[#9fc031]/20 stagger-item"
+        className="mx-5 mt-3 mb-1 px-4 py-2.5 rounded-2xl bg-[#005b52]/8 border border-[#005b52]/20 stagger-item"
         style={{ "--stagger": "150ms" }}
       >
         <p className="text-xs font-medium text-center text-[#005b52]">
@@ -35,7 +35,7 @@ export default function FriendsPage({ hasPosted, userPost, dbPosts = [], onPostC
       {hasPosted && userPost ? (
         <>
           <div className="px-5 pt-4 pb-1 stagger-item flex items-center gap-2" style={{ "--stagger": "200ms" }}>
-            <div className="w-1 h-3.5 rounded-full bg-[#dbf226]" />
+            <div className="w-1 h-3.5 rounded-full bg-[#005b52]" />
             <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
               Ta realisation
             </p>
@@ -50,7 +50,7 @@ export default function FriendsPage({ hasPosted, userPost, dbPosts = [], onPostC
         <div className="mx-5 mt-4 mb-2 stagger-item" style={{ "--stagger": "200ms" }}>
           <button
             onClick={onPostClick}
-            className="w-full py-5 rounded-[2rem] border-2 border-dashed flex flex-col items-center gap-2 tap-scale border-[#9fc031]/40 bg-[#9fc031]/5 hover:border-[#9fc031]/60 hover:bg-[#9fc031]/10"
+            className="w-full py-5 rounded-[2rem] border-2 border-dashed flex flex-col items-center gap-2 tap-scale border-[#005b52]/40 bg-[#005b52]/5 hover:border-[#005b52]/60 hover:bg-[#005b52]/10"
             style={{ transition: "border-color 0.3s ease, background-color 0.3s ease" }}
           >
             <div className="w-12 h-12 rounded-full bg-[#005b52] flex items-center justify-center animate-gentle-pulse">
@@ -67,7 +67,7 @@ export default function FriendsPage({ hasPosted, userPost, dbPosts = [], onPostC
 
       {/* Friends posts */}
       <div className="px-5 pt-4 pb-1 stagger-item flex items-center gap-2" style={{ "--stagger": "300ms" }}>
-        <div className="w-1 h-4 rounded-full bg-[#9fc031]" />
+        <div className="w-1 h-4 rounded-full bg-[#005b52]" />
         <p className="text-sm font-semibold uppercase tracking-wider text-gray-400">
           Tes amis
         </p>

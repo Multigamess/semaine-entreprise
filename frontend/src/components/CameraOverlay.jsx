@@ -222,7 +222,7 @@ export default function CameraOverlay({ onClose, onPublish }) {
             <div className="text-center">
               <FontAwesomeIcon icon={faCamera} className="text-white/30 text-4xl mb-3" />
               <p className="text-white/50 text-sm">{cameraError}</p>
-              <button onClick={() => startCamera(facing)} className="mt-3 text-[#9fc031] text-sm font-medium">
+              <button onClick={() => startCamera(facing)} className="mt-3 text-[#005b52] text-sm font-medium">
                 Reessayer
               </button>
             </div>

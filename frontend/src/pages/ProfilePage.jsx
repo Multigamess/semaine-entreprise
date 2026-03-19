@@ -46,8 +46,16 @@ export default function ProfilePage() {
     });
   }
 
-  function handleTouchStart(e) { touchStartX.current = e.touches[0].clientX; }
+  function handleTouchStart(e) {
+    e.stopPropagation();
+    touchStartX.current = e.touches[0].clientX;
+  }
+  function handleTouchMove(e) {
+    // Stop page-swipe from stealing the gesture
+    e.stopPropagation();
+  }
   function handleTouchEnd(e) {
+    e.stopPropagation();
     if (touchStartX.current === null) return;
     const diff = touchStartX.current - e.changedTouches[0].clientX;
     if (Math.abs(diff) > 50) changeMonth(diff > 0 ? 1 : -1);
@@ -71,7 +79,7 @@ export default function ProfilePage() {
           <img
             src={profileUser.avatar}
             alt={profileUser.name}
-            className="w-18 h-18 rounded-full object-cover ring-2 ring-[#9fc031]/25 shadow-lg shadow-[#9fc031]/15"
+            className="w-18 h-18 rounded-full object-cover ring-2 ring-[#005b52]/25 shadow-lg shadow-[#005b52]/15"
           />
         </div>
         <h2 className="mt-3 text-base font-bold text-gray-800 stagger-item" style={{ "--stagger": "100ms" }}>{profileUser.name}</h2>
@@ -131,7 +139,7 @@ export default function ProfilePage() {
           ))}
         </div>
 
-        <div className="overflow-hidden" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+        <div className="overflow-hidden" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
           <div className={`grid grid-cols-7 gap-1 ${gridAnim}`}>
             {Array.from({ length: offset }).map((_, i) => (
               <div key={`e-${i}`} className="aspect-square" />

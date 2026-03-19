@@ -32,7 +32,7 @@ export default function Navbar({ activeTab, onTabChange, onPostClick }) {
   }, [activeTab]);
 
   return (
-    <nav className="absolute bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-t border-[#9fc031]/15">
+    <nav className="absolute bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-t border-[#005b52]/15">
       {showPostButton && (
         <div className="absolute -top-16 left-1/2 -translate-x-1/2 z-50">
           <button

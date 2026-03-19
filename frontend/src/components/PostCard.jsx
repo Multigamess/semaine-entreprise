@@ -65,7 +65,7 @@ export default function PostCard({ post, recipe, blurred = false, style }) {
           <img
             src={post.user.avatar}
             alt={post.user.name}
-            className="w-9 h-9 rounded-full object-cover ring-2 ring-[#9fc031]/25"
+            className="w-9 h-9 rounded-full object-cover ring-2 ring-[#005b52]/25"
           />
           <div className="flex-1">
             <p className="text-sm font-semibold text-gray-800">{post.user.name}</p>
@@ -74,7 +74,7 @@ export default function PostCard({ post, recipe, blurred = false, style }) {
           {recipe && (
             <button
               onClick={() => setShowRecipe(true)}
-              className="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium tap-scale text-[#005b52] border border-[#9fc031]/30 hover:bg-[#9fc031]/10"
+              className="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium tap-scale text-[#005b52] border border-[#005b52]/30 hover:bg-[#005b52]/10"
             >
               <FontAwesomeIcon icon={faUtensils} className="text-[10px]" />
               Recette
@@ -141,7 +141,7 @@ export default function PostCard({ post, recipe, blurred = false, style }) {
                     onClick={() => handleReactionTap(i)}
                     className={`flex items-center gap-1 rounded-full px-2 py-1 tap-scale ${
                       isActive
-                        ? "bg-[#9fc031]/10 border border-[#9fc031]/30"
+                        ? "bg-[#005b52]/10 border border-[#005b52]/30"
                         : "bg-gray-50 border border-transparent hover:border-gray-200"
                     }`}
                     style={{ transition: "background-color 0.25s ease, border-color 0.25s ease" }}
@@ -202,7 +202,7 @@ export default function PostCard({ post, recipe, blurred = false, style }) {
               {recipe.tags.map((tag, i) => (
                 <span
                   key={tag}
-                  className="bg-[#9fc031]/10 text-[#005b52] border border-[#9fc031]/20 text-xs font-medium px-2.5 py-1 rounded-full animate-pop-in"
+                  className="bg-[#005b52]/10 text-[#005b52] border border-[#005b52]/20 text-xs font-medium px-2.5 py-1 rounded-full animate-pop-in"
                   style={{ "--delay": `${i * 40}ms` }}
                 >
                   {tag}

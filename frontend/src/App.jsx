@@ -138,13 +138,12 @@ function App() {
   const translateX = -tabIndex * 100 + (dragX / (window.innerWidth || 393)) * 100;
 
   const header = (
-    <div className="bg-white/80 backdrop-blur-sm border-b border-[#9fc031]/15 px-5 pt-[max(env(safe-area-inset-top),3.5rem)] pb-3 flex items-center justify-center relative overflow-hidden">
+    <div className="bg-white/80 backdrop-blur-sm border-b border-[#005b52]/15 px-5 pt-[max(env(safe-area-inset-top),3.5rem)] pb-3 flex items-center justify-center relative overflow-hidden">
       {/* Subtle brand gradient line at very top */}
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#005b52] via-[#9fc031] to-[#dbf226]" />
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#005b52] to-[#005b52]" />
       <h1 className="text-4xl font-extrabold tracking-tight">
         <span className="text-[#005b52]">bon</span>
-        <span className="text-gray-800">app</span>
-        <span className="text-[#dbf226]">&apos;</span>
+        <span className="text-gray-800">app&apos;</span>
       </h1>
     </div>
   );
