@@ -1,77 +1,80 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faFaceSmile,
+  faHeart,
   faUtensils,
   faXmark,
   faClock,
   faDumbbell,
 } from "@fortawesome/free-solid-svg-icons";
 
-export default function PostCard({ post, recipe }) {
+const COOKING_REACTIONS = [
+  { emoji: "😋", label: "Miam" },
+  { emoji: "🔥", label: "Chaud" },
+  { emoji: "👨‍🍳", label: "Chef" },
+  { emoji: "🥗", label: "Healthy" },
+  { emoji: "💪", label: "Proteine" },
+];
+
+function initCounts(postReactions) {
+  return COOKING_REACTIONS.map((r) => {
+    const match = postReactions.find((pr) => pr.emoji === r.emoji);
+    return match ? match.count : Math.floor(Math.random() * 8) + 1;
+  });
+}
+
+export default function PostCard({ post, recipe, blurred = false, style }) {
   const [showSelfie, setShowSelfie] = useState(false);
   const [showRecipe, setShowRecipe] = useState(false);
+  const [showHeartBurst, setShowHeartBurst] = useState(false);
+  const [selectedReaction, setSelectedReaction] = useState(null);
+  const [bouncingEmoji, setBouncingEmoji] = useState(null);
+  const [counts] = useState(() => initCounts(post.reactions));
+  const lastTap = useRef(0);
+
+  function handlePhotoTap() {
+    const now = Date.now();
+    if (now - lastTap.current < 300) {
+      if (selectedReaction === null) {
+        setSelectedReaction(0);
+        setBouncingEmoji(0);
+        setTimeout(() => setBouncingEmoji(null), 500);
+      }
+      setShowHeartBurst(true);
+      setTimeout(() => setShowHeartBurst(false), 900);
+    } else {
+      setShowSelfie(!showSelfie);
+    }
+    lastTap.current = now;
+  }
+
+  function handleReactionTap(index) {
+    const wasActive = selectedReaction === index;
+    setSelectedReaction(wasActive ? null : index);
+    if (!wasActive) {
+      setBouncingEmoji(index);
+      setTimeout(() => setBouncingEmoji(null), 500);
+    }
+  }
 
   return (
     <>
-      <article className="px-5 py-4">
+      <article className="px-5 py-4 stagger-item" style={style}>
         {/* User header */}
         <div className="flex items-center gap-3 mb-3">
           <img
             src={post.user.avatar}
             alt={post.user.name}
-            className="w-9 h-9 rounded-full object-cover"
+            className="w-9 h-9 rounded-full object-cover ring-2 ring-[#9fc031]/25"
           />
           <div className="flex-1">
-            <p className="text-sm font-semibold text-gray-900">
-              {post.user.name}
-            </p>
+            <p className="text-sm font-semibold text-gray-800">{post.user.name}</p>
             <p className="text-[11px] text-gray-400">{post.time}</p>
           </div>
-        </div>
-
-        {/* Dual camera photo */}
-        <div
-          className="relative w-full aspect-[3/4] rounded-xl overflow-hidden bg-gray-50 cursor-pointer"
-          onClick={() => setShowSelfie(!showSelfie)}
-        >
-          <img
-            src={showSelfie ? post.selfieImage : post.mainImage}
-            alt="Plat"
-            className="w-full h-full object-cover transition-all duration-300"
-          />
-          <div className="absolute top-3 left-3 w-[26%] aspect-square rounded-lg overflow-hidden border-2 border-white">
-            <img
-              src={showSelfie ? post.mainImage : post.selfieImage}
-              alt="Selfie"
-              className="w-full h-full object-cover"
-            />
-          </div>
-        </div>
-
-        {/* Actions row */}
-        <div className="flex items-center justify-between mt-3">
-          {/* Reactions */}
-          <div className="flex items-center gap-1.5">
-            {post.reactions.map((r, i) => (
-              <button
-                key={i}
-                className="flex items-center gap-1 bg-gray-50 border border-gray-100 hover:border-blue-200 rounded-full px-2.5 py-1 transition-colors"
-              >
-                <span className="text-sm">{r.emoji}</span>
-                <span className="text-xs text-gray-500 font-medium">{r.count}</span>
-              </button>
-            ))}
-            <button className="w-7 h-7 rounded-full bg-gray-50 border border-gray-100 hover:border-blue-200 flex items-center justify-center transition-colors">
-              <FontAwesomeIcon icon={faFaceSmile} className="text-xs text-gray-400" />
-            </button>
-          </div>
-
-          {/* See recipe button */}
           {recipe && (
             <button
               onClick={() => setShowRecipe(true)}
-              className="flex items-center gap-1.5 text-blue-500 border border-blue-200 hover:bg-blue-50 rounded-full px-3 py-1 text-xs font-medium transition-colors"
+              className="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium tap-scale text-[#005b52] border border-[#9fc031]/30 hover:bg-[#9fc031]/10"
             >
               <FontAwesomeIcon icon={faUtensils} className="text-[10px]" />
               Recette
@@ -79,83 +82,148 @@ export default function PostCard({ post, recipe }) {
           )}
         </div>
 
-        {/* Caption */}
-        <p className="mt-2 text-sm text-gray-600 leading-relaxed">
-          {post.caption}
-        </p>
+        {/* Dual camera photo */}
+        <div
+          className="relative w-full aspect-[3/4] rounded-[2rem] overflow-hidden bg-gray-50 cursor-pointer"
+          onClick={blurred ? undefined : handlePhotoTap}
+        >
+          {/* Main image with smooth crossfade */}
+          <img
+            src={showSelfie ? post.selfieImage : post.mainImage}
+            alt="Plat"
+            className={`w-full h-full object-cover ${blurred ? "blur-[12px] scale-105" : ""}`}
+            style={{ transition: "filter 0.4s ease, transform 0.4s ease" }}
+          />
+          {/* Mini PIP with smooth transition */}
+          <div
+            className={`absolute top-3 left-3 w-[26%] aspect-square rounded-xl overflow-hidden border-2 border-white shadow-lg ${blurred ? "blur-[12px]" : ""}`}
+            style={{ transition: "transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)" }}
+          >
+            <img
+              src={showSelfie ? post.mainImage : post.selfieImage}
+              alt="Selfie"
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          {!blurred && (
+            <span className="absolute bottom-3 right-3 text-[10px] font-bold text-white/30 tracking-tight select-none">
+              bonapp&apos;
+            </span>
+          )}
+
+          {showHeartBurst && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <FontAwesomeIcon icon={faHeart} className="text-white text-6xl animate-heart-burst drop-shadow-lg" />
+            </div>
+          )}
+
+          {blurred && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center animate-gentle-pulse">
+                <span className="text-2xl">🔒</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Reactions + caption */}
+        {!blurred && (
+          <div className="mt-3">
+            <div className="flex items-center gap-1.5">
+              {COOKING_REACTIONS.map((r, i) => {
+                const isActive = selectedReaction === i;
+                const isBouncing = bouncingEmoji === i;
+                const count = counts[i] + (isActive ? 1 : 0);
+                return (
+                  <button
+                    key={i}
+                    onClick={() => handleReactionTap(i)}
+                    className={`flex items-center gap-1 rounded-full px-2 py-1 tap-scale ${
+                      isActive
+                        ? "bg-[#9fc031]/10 border border-[#9fc031]/30"
+                        : "bg-gray-50 border border-transparent hover:border-gray-200"
+                    }`}
+                    style={{ transition: "background-color 0.25s ease, border-color 0.25s ease" }}
+                  >
+                    <span className={`text-sm ${isBouncing ? "animate-emoji-bounce" : ""}`}>{r.emoji}</span>
+                    <span
+                      className={`text-[11px] font-medium ${isActive ? "text-[#005b52]" : "text-gray-400"}`}
+                      style={{ transition: "color 0.2s ease" }}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <p className="mt-2 text-sm leading-relaxed text-gray-600">
+              {post.caption}
+            </p>
+          </div>
+        )}
       </article>
 
       {/* Recipe overlay */}
       {showRecipe && recipe && (
         <div
-          className="fixed inset-0 z-[100] bg-black/30 flex items-end justify-center"
+          className="fixed inset-0 z-[100] bg-black/30 flex items-end justify-center animate-backdrop"
           onClick={() => setShowRecipe(false)}
         >
           <div
             className="bg-white w-full max-w-lg rounded-t-[1.5rem] p-6 pb-10 animate-slide-up"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Handle bar */}
-            <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
+            <div className="w-10 h-1 rounded-full mx-auto mb-5 bg-gray-200" />
 
-            {/* Close button */}
             <button
               onClick={() => setShowRecipe(false)}
-              className="absolute top-6 right-6 w-7 h-7 rounded-full border border-gray-100 flex items-center justify-center"
+              className="absolute top-6 right-6 w-7 h-7 rounded-full border border-gray-200 flex items-center justify-center tap-scale"
             >
-              <FontAwesomeIcon icon={faXmark} className="text-gray-400 text-sm" />
+              <FontAwesomeIcon icon={faXmark} className="text-sm text-gray-400" />
             </button>
 
-            {/* Recipe content */}
-            <p className="text-[11px] text-blue-500 font-medium uppercase tracking-wider mb-1">
-              Recette
-            </p>
-            <h3 className="text-lg font-bold text-gray-900 mb-3">
-              {recipe.name}
-            </h3>
+            <p className="text-[11px] text-[#005b52] font-medium uppercase tracking-wider mb-1">Recette</p>
+            <h3 className="text-lg font-bold mb-3 text-gray-800">{recipe.name}</h3>
 
             <div className="flex items-center gap-4 mb-4 text-sm text-gray-400">
               <span className="flex items-center gap-1.5">
-                <FontAwesomeIcon icon={faClock} className="text-gray-300 text-xs" />
+                <FontAwesomeIcon icon={faClock} className="text-xs" />
                 {recipe.time}
               </span>
               <span className="flex items-center gap-1.5">
-                <FontAwesomeIcon icon={faDumbbell} className="text-gray-300 text-xs" />
+                <FontAwesomeIcon icon={faDumbbell} className="text-xs" />
                 {recipe.difficulty}
               </span>
             </div>
 
-            {/* Tags */}
             <div className="flex flex-wrap gap-1.5 mb-4">
-              {recipe.tags.map((tag) => (
+              {recipe.tags.map((tag, i) => (
                 <span
                   key={tag}
-                  className="bg-gray-50 border border-gray-100 text-gray-600 text-xs font-medium px-2.5 py-1 rounded-full"
+                  className="bg-[#9fc031]/10 text-[#005b52] border border-[#9fc031]/20 text-xs font-medium px-2.5 py-1 rounded-full animate-pop-in"
+                  style={{ "--delay": `${i * 40}ms` }}
                 >
                   {tag}
                 </span>
               ))}
             </div>
 
-            {/* Ingredients */}
-            <p className="text-sm font-semibold text-gray-900 mb-2">Ingredients</p>
+            <p className="text-sm font-semibold mb-2 text-gray-800">Ingredients</p>
             <div className="flex flex-wrap gap-1.5">
-              {recipe.ingredients.map((ing) => (
+              {recipe.ingredients.map((ing, i) => (
                 <span
                   key={ing}
-                  className="bg-gray-50 text-gray-500 text-xs px-2.5 py-1 rounded-full"
+                  className="bg-gray-50 text-gray-600 text-xs px-2.5 py-1 rounded-full animate-pop-in"
+                  style={{ "--delay": `${100 + i * 30}ms` }}
                 >
                   {ing}
                 </span>
               ))}
             </div>
 
-            {/* Recipe image */}
-            <img
-              src={recipe.image}
-              alt={recipe.name}
-              className="w-full h-36 object-cover rounded-xl mt-4"
-            />
+            <img src={recipe.image} alt={recipe.name} className="w-full h-36 object-cover rounded-xl mt-4 animate-img-reveal" />
           </div>
         </div>
       )}

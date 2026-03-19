@@ -180,7 +180,10 @@ export const profileUser = {
   avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop&crop=face",
   bio: "Etudiant foodie en mission healthy",
   stats: { plats: 12, amis: 24, semaines: 6 },
+  streakCount: 6,
 };
+
+export const friendsCooked = ["Marie", "Lucas", "Camille"];
 
 // User's weekly realization — shown after recipes in Friends feed
 export const userWeeklyRealization = {

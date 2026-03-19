@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faHeart,
   faCheckCircle,
   faUtensils,
   faXmark,
@@ -12,6 +11,60 @@ import { creators, creatorFeedPosts, creatorRecipes } from "../data/sampleData";
 
 const TYPE_LABELS = { chef: "Chef", influenceur: "Influenceur", restaurateur: "Restaurateur" };
 
+const COOKING_REACTIONS = [
+  { emoji: "😋", label: "Miam" },
+  { emoji: "🔥", label: "Chaud" },
+  { emoji: "👨‍🍳", label: "Chef" },
+  { emoji: "🥗", label: "Healthy" },
+  { emoji: "💪", label: "Proteine" },
+];
+
+function CreatorPostReactions({ likes }) {
+  const [selected, setSelected] = useState(null);
+  const [bouncing, setBouncing] = useState(null);
+  const [counts] = useState(() =>
+    COOKING_REACTIONS.map(() => Math.floor(likes / COOKING_REACTIONS.length) + Math.floor(Math.random() * 5))
+  );
+
+  function handleTap(i) {
+    const wasActive = selected === i;
+    setSelected(wasActive ? null : i);
+    if (!wasActive) {
+      setBouncing(i);
+      setTimeout(() => setBouncing(null), 500);
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-1.5">
+      {COOKING_REACTIONS.map((r, i) => {
+        const isActive = selected === i;
+        const count = counts[i] + (isActive ? 1 : 0);
+        return (
+          <button
+            key={i}
+            onClick={() => handleTap(i)}
+            className={`flex items-center gap-1 rounded-full px-2 py-1 tap-scale ${
+              isActive
+                ? "bg-[#9fc031]/10 border border-[#9fc031]/30"
+                : "bg-gray-50 border border-transparent"
+            }`}
+            style={{ transition: "background-color 0.25s ease, border-color 0.25s ease" }}
+          >
+            <span className={`text-sm ${bouncing === i ? "animate-emoji-bounce" : ""}`}>{r.emoji}</span>
+            <span
+              className={`text-[11px] font-medium ${isActive ? "text-[#005b52]" : "text-gray-400"}`}
+              style={{ transition: "color 0.2s ease" }}
+            >
+              {count}
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function CreatorsPage({ onSelectCreator }) {
   const creatorsMap = Object.fromEntries(creators.map((c) => [c.id, c]));
   const recipesMap = Object.fromEntries(creatorRecipes.map((r) => [r.id, r]));
@@ -21,94 +74,41 @@ export default function CreatorsPage({ onSelectCreator }) {
 
   return (
     <div>
-      {/* Suggested creators */}
-      <div className="px-5 pt-3 pb-2">
-        <p className="text-sm font-semibold text-gray-900 mb-3">Createurs a suivre</p>
-        <div className="flex gap-3 overflow-x-auto pb-2 -mx-5 px-5 scrollbar-hide">
-          {creators.map((creator) => (
-            <button
-              key={creator.id}
-              onClick={() => onSelectCreator(creator.id)}
-              className="flex flex-col items-center gap-1.5 min-w-[68px]"
-            >
-              <div
-                className="w-14 h-14 rounded-full p-[2px]"
-                style={{ background: `linear-gradient(135deg, ${creator.theme.primary}, ${creator.theme.accent})` }}
-              >
-                <img
-                  src={creator.avatar}
-                  alt={creator.name}
-                  className="w-full h-full rounded-full object-cover border-2 border-white"
-                />
-              </div>
-              <span className="text-[10px] font-medium text-gray-600 truncate w-16 text-center">
-                {creator.name}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="mx-5 border-t border-gray-100" />
-
-      {/* Feed */}
       <div>
-        {creatorFeedPosts.map((post) => {
+        {creatorFeedPosts.map((post, postIndex) => {
           const creator = creatorsMap[post.creatorId];
           if (!creator) return null;
           const recipe = post.recipeId ? recipesMap[post.recipeId] : null;
 
           return (
-            <article key={post.id} className="px-5 py-4">
-              {/* Creator header */}
-              <button
-                onClick={() => onSelectCreator(creator.id)}
-                className="flex items-center gap-3 mb-3 w-full text-left"
-              >
-                <img
-                  src={creator.avatar}
-                  alt={creator.name}
-                  className="w-9 h-9 rounded-full object-cover"
-                />
-                <div className="flex-1">
-                  <div className="flex items-center gap-1.5">
-                    <p className="text-sm font-semibold text-gray-900">{creator.name}</p>
-                    {creator.verified && (
-                      <FontAwesomeIcon icon={faCheckCircle} className="text-blue-500 text-[10px]" />
-                    )}
+            <article
+              key={post.id}
+              className="px-5 py-4 stagger-item"
+              style={{ "--stagger": `${postIndex * 120}ms` }}
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <button onClick={() => onSelectCreator(creator.id)} className="flex items-center gap-3 flex-1 text-left tap-scale">
+                  <img src={creator.avatar} alt={creator.name} className="w-9 h-9 rounded-full object-cover ring-2 ring-[#9fc031]/15" />
+                  <div className="flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-sm font-semibold text-gray-800">{creator.name}</p>
+                      {creator.verified && <FontAwesomeIcon icon={faCheckCircle} className="text-[#005b52] text-[10px]" />}
+                    </div>
+                    <span
+                      className="text-[10px] font-medium px-2 py-0.5 rounded-full"
+                      style={{
+                        backgroundColor: creator.theme.secondary,
+                        color: creator.theme.primary,
+                      }}
+                    >
+                      {TYPE_LABELS[creator.type]}
+                    </span>
                   </div>
-                  <span
-                    className="text-[10px] font-medium px-2 py-0.5 rounded-full"
-                    style={{ backgroundColor: creator.theme.secondary, color: creator.theme.primary }}
-                  >
-                    {TYPE_LABELS[creator.type]}
-                  </span>
-                </div>
-                <span className="text-[11px] text-gray-400">{post.time}</span>
-              </button>
-
-              {/* Post image */}
-              <div className="w-full aspect-[4/5] rounded-xl overflow-hidden bg-gray-50">
-                <img
-                  src={post.image}
-                  alt=""
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              {/* Actions */}
-              <div className="flex items-center justify-between mt-3">
-                <button className="flex items-center gap-1.5 bg-gray-50 border border-gray-100 hover:border-gray-200 rounded-full px-2.5 py-1 transition-colors">
-                  <FontAwesomeIcon icon={faHeart} className="text-sm text-gray-400" />
-                  <span className="text-xs text-gray-500 font-medium">
-                    {post.likes >= 1000 ? `${(post.likes / 1000).toFixed(1)}k` : post.likes}
-                  </span>
                 </button>
-
                 {recipe && (
                   <button
                     onClick={() => setShowRecipe(post.recipeId)}
-                    className="flex items-center gap-1.5 text-blue-500 border border-blue-200 hover:bg-blue-50 rounded-full px-3 py-1 text-xs font-medium transition-colors"
+                    className="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium tap-scale text-[#005b52] border border-[#9fc031]/30 hover:bg-[#9fc031]/10"
                   >
                     <FontAwesomeIcon icon={faUtensils} className="text-[10px]" />
                     Recette
@@ -116,8 +116,15 @@ export default function CreatorsPage({ onSelectCreator }) {
                 )}
               </div>
 
-              {/* Caption */}
-              <p className="mt-2 text-sm text-gray-600 leading-relaxed">{post.caption}</p>
+              <div className="w-full aspect-[4/5] rounded-2xl overflow-hidden bg-gray-50">
+                <img src={post.image} alt="" className="w-full h-full object-cover" />
+              </div>
+
+              <div className="mt-3">
+                <CreatorPostReactions likes={post.likes} />
+              </div>
+
+              <p className="mt-2 text-sm leading-relaxed text-gray-600">{post.caption}</p>
             </article>
           );
         })}
@@ -125,69 +132,36 @@ export default function CreatorsPage({ onSelectCreator }) {
 
       {/* Recipe overlay */}
       {activeRecipe && (
-        <div
-          className="fixed inset-0 z-[100] bg-black/30 flex items-end justify-center"
-          onClick={() => setShowRecipe(null)}
-        >
-          <div
-            className="bg-white w-full max-w-lg rounded-t-[1.5rem] p-6 pb-10 animate-slide-up"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
+        <div className="fixed inset-0 z-[100] bg-black/30 flex items-end justify-center animate-backdrop" onClick={() => setShowRecipe(null)}>
+          <div className="bg-white w-full max-w-lg rounded-t-[1.5rem] p-6 pb-10 animate-slide-up" onClick={(e) => e.stopPropagation()}>
+            <div className="w-10 h-1 rounded-full mx-auto mb-5 bg-gray-200" />
 
-            <button
-              onClick={() => setShowRecipe(null)}
-              className="absolute top-6 right-6 w-7 h-7 rounded-full border border-gray-100 flex items-center justify-center"
-            >
-              <FontAwesomeIcon icon={faXmark} className="text-gray-400 text-sm" />
+            <button onClick={() => setShowRecipe(null)} className="absolute top-6 right-6 w-7 h-7 rounded-full border border-gray-200 flex items-center justify-center tap-scale">
+              <FontAwesomeIcon icon={faXmark} className="text-sm text-gray-400" />
             </button>
 
-            <p className="text-[11px] text-blue-500 font-medium uppercase tracking-wider mb-1">
-              Recette du createur
-            </p>
-            <h3 className="text-lg font-bold text-gray-900 mb-3">
-              {activeRecipe.name}
-            </h3>
+            <p className="text-[11px] text-[#005b52] font-medium uppercase tracking-wider mb-1">Recette du createur</p>
+            <h3 className="text-lg font-bold mb-3 text-gray-800">{activeRecipe.name}</h3>
 
             <div className="flex items-center gap-4 mb-4 text-sm text-gray-400">
-              <span className="flex items-center gap-1.5">
-                <FontAwesomeIcon icon={faClock} className="text-gray-300 text-xs" />
-                {activeRecipe.time}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <FontAwesomeIcon icon={faDumbbell} className="text-gray-300 text-xs" />
-                {activeRecipe.difficulty}
-              </span>
+              <span className="flex items-center gap-1.5"><FontAwesomeIcon icon={faClock} className="text-xs" />{activeRecipe.time}</span>
+              <span className="flex items-center gap-1.5"><FontAwesomeIcon icon={faDumbbell} className="text-xs" />{activeRecipe.difficulty}</span>
             </div>
 
             <div className="flex flex-wrap gap-1.5 mb-4">
-              {activeRecipe.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="bg-gray-50 border border-gray-100 text-gray-600 text-xs font-medium px-2.5 py-1 rounded-full"
-                >
-                  {tag}
-                </span>
+              {activeRecipe.tags.map((tag, i) => (
+                <span key={tag} className="bg-[#9fc031]/10 text-[#005b52] border border-[#9fc031]/20 text-xs font-medium px-2.5 py-1 rounded-full animate-pop-in" style={{ "--delay": `${i * 40}ms` }}>{tag}</span>
               ))}
             </div>
 
-            <p className="text-sm font-semibold text-gray-900 mb-2">Ingredients</p>
+            <p className="text-sm font-semibold mb-2 text-gray-800">Ingredients</p>
             <div className="flex flex-wrap gap-1.5">
-              {activeRecipe.ingredients.map((ing) => (
-                <span
-                  key={ing}
-                  className="bg-gray-50 text-gray-500 text-xs px-2.5 py-1 rounded-full"
-                >
-                  {ing}
-                </span>
+              {activeRecipe.ingredients.map((ing, i) => (
+                <span key={ing} className="bg-gray-50 text-gray-600 text-xs px-2.5 py-1 rounded-full animate-pop-in" style={{ "--delay": `${100 + i * 30}ms` }}>{ing}</span>
               ))}
             </div>
 
-            <img
-              src={activeRecipe.image}
-              alt={activeRecipe.name}
-              className="w-full h-36 object-cover rounded-xl mt-4"
-            />
+            <img src={activeRecipe.image} alt={activeRecipe.name} className="w-full h-36 object-cover rounded-xl mt-4 animate-img-reveal" />
           </div>
         </div>
       )}
