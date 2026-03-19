@@ -17,8 +17,9 @@ const COOKING_REACTIONS = [
 ];
 
 function initCounts(postReactions) {
+  const reactions = Array.isArray(postReactions) ? postReactions : [];
   return COOKING_REACTIONS.map((r) => {
-    const match = postReactions.find((pr) => pr.emoji === r.emoji);
+    const match = reactions.find((pr) => pr.emoji === r.emoji);
     return match ? match.count : Math.floor(Math.random() * 8) + 1;
   });
 }
@@ -172,7 +173,7 @@ export default function PostCard({ post, recipe, blurred = false, style }) {
           onClick={() => setShowRecipe(false)}
         >
           <div
-            className="bg-white w-full max-w-lg rounded-t-[1.5rem] p-6 pb-10 animate-slide-up"
+            className="bg-white w-full max-w-lg rounded-t-[1.5rem] p-6 pb-10 animate-slide-up max-h-[85vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="w-10 h-1 rounded-full mx-auto mb-5 bg-gray-200" />
@@ -187,15 +188,23 @@ export default function PostCard({ post, recipe, blurred = false, style }) {
             <p className="text-[11px] text-[#005b52] font-medium uppercase tracking-wider mb-1">Recette</p>
             <h3 className="text-lg font-bold mb-3 text-gray-800">{recipe.name}</h3>
 
-            <div className="flex items-center gap-4 mb-4 text-sm text-gray-400">
-              <span className="flex items-center gap-1.5">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="flex items-center gap-1.5 text-sm text-gray-400">
                 <FontAwesomeIcon icon={faClock} className="text-xs" />
                 {recipe.time}
               </span>
-              <span className="flex items-center gap-1.5">
+              <span className="flex items-center gap-1.5 text-sm text-gray-400">
                 <FontAwesomeIcon icon={faDumbbell} className="text-xs" />
                 {recipe.difficulty}
               </span>
+              {recipe.nutriscore && (
+                <span className={`nutriscore-${recipe.nutriscore} text-[10px] font-bold w-6 h-6 rounded-md flex items-center justify-center`}>
+                  {recipe.nutriscore}
+                </span>
+              )}
+              {recipe.calories && (
+                <span className="text-xs text-gray-400 font-medium">{recipe.calories} kcal</span>
+              )}
             </div>
 
             <div className="flex flex-wrap gap-1.5 mb-4">
@@ -211,7 +220,7 @@ export default function PostCard({ post, recipe, blurred = false, style }) {
             </div>
 
             <p className="text-sm font-semibold mb-2 text-gray-800">Ingredients</p>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-1.5 mb-4">
               {recipe.ingredients.map((ing, i) => (
                 <span
                   key={ing}
@@ -223,7 +232,27 @@ export default function PostCard({ post, recipe, blurred = false, style }) {
               ))}
             </div>
 
-            <img src={recipe.image} alt={recipe.name} className="w-full h-36 object-cover rounded-xl mt-4 animate-img-reveal" />
+            {recipe.steps && recipe.steps.length > 0 && (
+              <>
+                <p className="text-sm font-semibold mb-2 text-gray-800">Etapes</p>
+                <div className="space-y-2 mb-4">
+                  {recipe.steps.map((step, i) => (
+                    <div
+                      key={i}
+                      className="flex items-start gap-3 animate-pop-in"
+                      style={{ "--delay": `${200 + i * 50}ms` }}
+                    >
+                      <div className="w-6 h-6 rounded-full bg-[#005b52] flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-white text-[10px] font-bold">{i + 1}</span>
+                      </div>
+                      <p className="text-sm text-gray-600 leading-relaxed">{step}</p>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            <img src={recipe.image} alt={recipe.name} className="w-full h-36 object-cover rounded-xl animate-img-reveal" />
           </div>
         </div>
       )}

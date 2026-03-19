@@ -14,10 +14,21 @@ function App() {
   const [activeTab, setActiveTab] = useState("friends");
   const [selectedCreator, setSelectedCreator] = useState(null);
   const [showCamera, setShowCamera] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    try { return localStorage.getItem("bonapp-dark") === "true"; } catch { return false; }
+  });
 
   const [userPost, setUserPost] = useState(userWeeklyRealization);
   const [hasPosted, setHasPosted] = useState(true);
   const [dbPosts, setDbPosts] = useState([]);
+
+  function toggleDarkMode() {
+    setDarkMode((prev) => {
+      const next = !prev;
+      try { localStorage.setItem("bonapp-dark", String(next)); } catch {}
+      return next;
+    });
+  }
 
   // Swipe state
   const [dragX, setDragX] = useState(0);
@@ -125,11 +136,11 @@ function App() {
 
   if (selectedCreator && creatorsMap[selectedCreator]) {
     return (
-      <div className="h-full bg-[#FAFBFF] relative flex flex-col overflow-hidden">
+      <div className={`h-full bg-[#FAFBFF] relative flex flex-col overflow-hidden ${darkMode ? "dark" : ""}`} style={{ backgroundColor: darkMode ? "var(--bg-app)" : undefined }}>
         <div className="flex-1 overflow-y-auto pb-28 pt-14">
           <CreatorProfilePage creator={creatorsMap[selectedCreator]} onBack={handleBackFromCreator} />
         </div>
-        <Navbar activeTab={activeTab} onTabChange={handleTabChange} onPostClick={() => setShowCamera(true)} />
+        <Navbar activeTab={activeTab} onTabChange={handleTabChange} onPostClick={() => setShowCamera(true)} darkMode={darkMode} />
         {showCamera && <CameraOverlay onClose={() => setShowCamera(false)} onPublish={handlePublish} />}
       </div>
     );
@@ -138,18 +149,23 @@ function App() {
   const translateX = -tabIndex * 100 + (dragX / (window.innerWidth || 393)) * 100;
 
   const header = (
-    <div className="bg-white/80 backdrop-blur-sm border-b border-[#005b52]/15 px-5 pt-[max(env(safe-area-inset-top),3.5rem)] pb-3 flex items-center justify-center relative overflow-hidden">
-      {/* Subtle brand gradient line at very top */}
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#005b52] to-[#005b52]" />
+    <div
+      className="backdrop-blur-sm border-b px-5 pt-[max(env(safe-area-inset-top),3.5rem)] pb-3 flex items-center justify-center relative overflow-hidden"
+      style={{
+        backgroundColor: darkMode ? "var(--header-bg)" : "rgba(255,255,255,0.8)",
+        borderColor: darkMode ? "var(--border-color)" : "rgba(0,91,82,0.15)",
+      }}
+    >
+      <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ backgroundColor: darkMode ? "var(--brand)" : "#005b52" }} />
       <h1 className="text-4xl font-extrabold tracking-tight">
-        <span className="text-[#005b52]">bon</span>
-        <span className="text-gray-800">app&apos;</span>
+        <span style={{ color: darkMode ? "var(--brand)" : "#005b52" }}>bon</span>
+        <span style={{ color: darkMode ? "var(--text-primary)" : undefined }} className="text-gray-800">app&apos;</span>
       </h1>
     </div>
   );
 
   return (
-    <div className="h-full bg-[#FAFBFF] relative flex flex-col overflow-hidden">
+    <div className={`h-full bg-[#FAFBFF] relative flex flex-col overflow-hidden ${darkMode ? "dark" : ""}`} style={{ backgroundColor: darkMode ? "var(--bg-app)" : undefined }}>
       {/* Swipeable pages */}
       <div
         className="flex-1 relative overflow-hidden"
@@ -176,12 +192,12 @@ function App() {
           </div>
           <div className="w-full h-full flex-shrink-0 overflow-y-auto pb-28">
             {header}
-            <ProfilePage />
+            <ProfilePage darkMode={darkMode} onToggleDark={toggleDarkMode} />
           </div>
         </div>
       </div>
 
-      <Navbar activeTab={activeTab} onTabChange={handleTabChange} onPostClick={() => setShowCamera(true)} />
+      <Navbar activeTab={activeTab} onTabChange={handleTabChange} onPostClick={() => setShowCamera(true)} darkMode={darkMode} />
       {showCamera && <CameraOverlay onClose={() => setShowCamera(false)} onPublish={handlePublish} />}
     </div>
   );

@@ -1,11 +1,76 @@
 @import "tailwindcss";
 
+/* ============================================
+   DARK MODE CSS CUSTOM PROPERTIES
+   ============================================ */
+:root {
+  --bg-app: #FAFBFF;
+  --bg-card: #FFFFFF;
+  --bg-surface: #F9FAFB;
+  --bg-hover: #F3F4F6;
+  --text-primary: #1F2937;
+  --text-secondary: #6B7280;
+  --text-muted: #9CA3AF;
+  --text-faint: #D1D5DB;
+  --border-color: #F3F4F6;
+  --border-subtle: rgba(0,0,0,0.06);
+  --brand: #005b52;
+  --brand-light: rgba(0,91,82,0.08);
+  --brand-border: rgba(0,91,82,0.2);
+  --shadow-color: rgba(0,0,0,0.08);
+  --header-bg: rgba(255,255,255,0.8);
+  --overlay-bg: rgba(0,0,0,0.3);
+}
+
+.dark {
+  --bg-app: #0c1117;
+  --bg-card: #161b22;
+  --bg-surface: #1c2333;
+  --bg-hover: #21293a;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-muted: #6e7681;
+  --text-faint: #484f58;
+  --border-color: rgba(255,255,255,0.06);
+  --border-subtle: rgba(255,255,255,0.04);
+  --brand: #00a895;
+  --brand-light: rgba(0,168,149,0.12);
+  --brand-border: rgba(0,168,149,0.25);
+  --shadow-color: rgba(0,0,0,0.3);
+  --header-bg: rgba(12,17,23,0.85);
+  --overlay-bg: rgba(0,0,0,0.6);
+}
+
 body {
   margin: 0;
   background-color: #FFFFFF;
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark mode body overrides */
+.dark {
+  color-scheme: dark;
+}
+.dark .bg-white\/80 { background-color: var(--header-bg) !important; }
+.dark .bg-white { background-color: var(--bg-card) !important; }
+.dark .bg-gray-50 { background-color: var(--bg-surface) !important; }
+.dark .text-gray-800 { color: var(--text-primary) !important; }
+.dark .text-gray-600 { color: var(--text-secondary) !important; }
+.dark .text-gray-500 { color: var(--text-secondary) !important; }
+.dark .text-gray-400 { color: var(--text-muted) !important; }
+.dark .text-gray-300 { color: var(--text-faint) !important; }
+.dark .text-gray-900 { color: var(--text-primary) !important; }
+.dark .border-gray-100 { border-color: var(--border-color) !important; }
+.dark .border-gray-200 { border-color: var(--border-color) !important; }
+.dark .bg-gray-100 { background-color: var(--bg-hover) !important; }
+.dark .bg-gray-200 { background-color: var(--bg-hover) !important; }
+
+/* Dark mode transition for all elements */
+.dark-transition,
+.dark-transition * {
+  transition: background-color 0.4s ease, color 0.3s ease, border-color 0.3s ease !important;
 }
 
 /* Root — full viewport on mobile, centered phone frame on desktop */
@@ -401,8 +466,62 @@ button, a {
 
 /* Smooth focus rings */
 *:focus-visible {
-  outline: 2px solid #005b52;
+  outline: 2px solid var(--brand, #005b52);
   outline-offset: 2px;
   border-radius: 8px;
   transition: outline-offset 0.15s ease;
 }
+
+/* ============================================
+   SEARCH BAR ANIMATION
+   ============================================ */
+@keyframes search-expand {
+  from { width: 3rem; opacity: 0.5; border-radius: 9999px; }
+  to { width: 100%; opacity: 1; border-radius: 1rem; }
+}
+@keyframes search-collapse {
+  from { width: 100%; opacity: 1; border-radius: 1rem; }
+  to { width: 3rem; opacity: 0; border-radius: 9999px; }
+}
+.animate-search-expand {
+  animation: search-expand 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.animate-search-collapse {
+  animation: search-collapse 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* ============================================
+   NUTRISCORE COLORS
+   ============================================ */
+.nutriscore-A { background-color: #038141; color: white; }
+.nutriscore-B { background-color: #85BB2F; color: white; }
+.nutriscore-C { background-color: #FECB02; color: #1a1a1a; }
+.nutriscore-D { background-color: #EE8100; color: white; }
+.nutriscore-E { background-color: #E63E11; color: white; }
+
+/* ============================================
+   DARK MODE — DEEP OVERRIDES
+   ============================================ */
+.dark [class*="bg-\[#FAFBFF\]"] { background-color: var(--bg-app) !important; }
+.dark .border-b { border-color: var(--border-color) !important; }
+
+/* Dark mode for specific brand-light backgrounds */
+.dark [class*="bg-\[#005b52\]\/5"],
+.dark [class*="bg-\[#005b52\]\/8"],
+.dark [class*="bg-\[#005b52\]\/10"] {
+  background-color: var(--brand-light) !important;
+}
+
+/* Dark mode for card-like surfaces */
+.dark article { background-color: transparent; }
+.dark .rounded-\[2rem\] { background-color: var(--bg-surface); }
+
+/* Dark mode streak badge */
+.dark .from-orange-50 { --tw-gradient-from: #2a1f0d !important; }
+.dark .to-amber-50 { --tw-gradient-to: #2a1f0d !important; }
+.dark .border-orange-100\/50 { border-color: rgba(251,191,36,0.15) !important; }
+.dark .text-orange-600 { color: #fbbf24 !important; }
+
+/* Week card dark mode */
+.dark .week-card { background-color: var(--bg-surface); border-color: var(--border-color); }
+.dark .week-card-empty { background-color: var(--bg-surface); border-color: var(--border-color); }

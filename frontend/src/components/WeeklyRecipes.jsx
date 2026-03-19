@@ -1,11 +1,12 @@
-import { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { useState, useRef } from "react";
 import RecipeCard from "./RecipeCard";
 
 export default function WeeklyRecipes({ recipes }) {
   const [current, setCurrent] = useState(0);
   const [flippedIndex, setFlippedIndex] = useState(null);
+  const [dragX, setDragX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const touchRef = useRef({ startX: 0, startY: 0, locked: null });
 
   function goTo(index) {
     setFlippedIndex(null);
@@ -16,45 +17,82 @@ export default function WeeklyRecipes({ recipes }) {
     setFlippedIndex(flippedIndex === index ? null : index);
   }
 
+  // Swipe handlers with stopPropagation to prevent page-level swipe
+  function handleTouchStart(e) {
+    e.stopPropagation();
+    touchRef.current.startX = e.touches[0].clientX;
+    touchRef.current.startY = e.touches[0].clientY;
+    touchRef.current.locked = null;
+    setIsDragging(true);
+  }
+
+  function handleTouchMove(e) {
+    e.stopPropagation();
+    if (!isDragging) return;
+
+    const dx = e.touches[0].clientX - touchRef.current.startX;
+    const dy = e.touches[0].clientY - touchRef.current.startY;
+
+    if (touchRef.current.locked === null) {
+      if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
+        touchRef.current.locked = Math.abs(dx) > Math.abs(dy) ? "h" : "v";
+      }
+    }
+
+    if (touchRef.current.locked === "h") {
+      e.preventDefault();
+      // Add resistance at edges
+      let clampedDx = dx;
+      if ((current === 0 && dx > 0) || (current === recipes.length - 1 && dx < 0)) {
+        clampedDx = dx * 0.3;
+      }
+      setDragX(clampedDx);
+    }
+  }
+
+  function handleTouchEnd(e) {
+    e.stopPropagation();
+    if (!isDragging) return;
+    setIsDragging(false);
+
+    const containerWidth = 300; // approximate
+    const threshold = containerWidth * 0.2;
+
+    if (dragX < -threshold && current < recipes.length - 1) {
+      goTo(current + 1);
+    } else if (dragX > threshold && current > 0) {
+      goTo(current - 1);
+    }
+    setDragX(0);
+    touchRef.current.locked = null;
+  }
+
+  const offsetPercent = -current * 100 + (dragX / 3.5);
+
   return (
     <section className="px-5 pt-5 pb-2">
       <h2 className="text-xl font-extrabold mb-1 text-gray-800">Tes recettes de la semaine</h2>
       <p className="text-xs mb-3 text-gray-400">Choisis, cuisine, partage !</p>
 
-      <div className="relative">
-        <div className="overflow-hidden rounded-[2rem]">
-          <div
-            className="flex"
-            style={{
-              transform: `translateX(-${current * 100}%)`,
-              transition: "transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)",
-            }}
-          >
-            {recipes.map((recipe, i) => (
-              <div key={recipe.id} className="w-full flex-shrink-0">
-                <RecipeCard recipe={recipe} flipped={flippedIndex === i} onFlip={() => handleFlip(i)} />
-              </div>
-            ))}
-          </div>
+      <div
+        className="relative overflow-hidden rounded-[2rem]"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        <div
+          className="flex"
+          style={{
+            transform: `translateX(${offsetPercent}%)`,
+            transition: isDragging ? "none" : "transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)",
+          }}
+        >
+          {recipes.map((recipe, i) => (
+            <div key={recipe.id} className="w-full flex-shrink-0">
+              <RecipeCard recipe={recipe} flipped={flippedIndex === i} onFlip={() => handleFlip(i)} />
+            </div>
+          ))}
         </div>
-
-        {/* Navigation arrows */}
-        {current > 0 && (
-          <button
-            onClick={() => goTo(current - 1)}
-            className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm border border-gray-100 shadow-md flex items-center justify-center tap-scale z-10"
-          >
-            <FontAwesomeIcon icon={faChevronLeft} className="text-xs text-gray-600" />
-          </button>
-        )}
-        {current < recipes.length - 1 && (
-          <button
-            onClick={() => goTo(current + 1)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm border border-gray-100 shadow-md flex items-center justify-center tap-scale z-10"
-          >
-            <FontAwesomeIcon icon={faChevronRight} className="text-xs text-gray-600" />
-          </button>
-        )}
       </div>
 
       <div className="flex justify-center gap-1.5 mt-3">

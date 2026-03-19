@@ -18,16 +18,23 @@ export default function RecipeCard({ recipe, flipped, onFlip }) {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-          {/* Tags */}
-          <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-            {recipe.tags.map((tag) => (
-              <span
-                key={tag}
-                className="bg-white/80 backdrop-blur-sm text-gray-700 text-[10px] font-medium px-2 py-0.5 rounded-full"
-              >
-                {tag}
+          {/* Tags + Nutriscore */}
+          <div className="absolute top-3 left-3 right-3 flex items-start justify-between">
+            <div className="flex flex-wrap gap-1.5">
+              {recipe.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="bg-white/80 backdrop-blur-sm text-gray-700 text-[10px] font-medium px-2 py-0.5 rounded-full"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+            {recipe.nutriscore && (
+              <span className={`nutriscore-${recipe.nutriscore} text-[10px] font-bold w-7 h-7 rounded-lg flex items-center justify-center shadow-sm flex-shrink-0 ml-2`}>
+                {recipe.nutriscore}
               </span>
-            ))}
+            )}
           </div>
 
           {/* Bottom info */}
@@ -44,8 +51,10 @@ export default function RecipeCard({ recipe, flipped, onFlip }) {
                 <FontAwesomeIcon icon={faDumbbell} className="text-[10px]" />
                 {recipe.difficulty}
               </span>
+              {recipe.calories && (
+                <span className="text-white/50">{recipe.calories} kcal</span>
+              )}
             </div>
-            {/* Hint */}
             <p className="text-white/40 text-[10px] mt-2 flex items-center gap-1">
               <FontAwesomeIcon icon={faRotate} className="text-[8px]" />
               Appuie pour voir la recette
@@ -67,6 +76,14 @@ export default function RecipeCard({ recipe, flipped, onFlip }) {
                 <FontAwesomeIcon icon={faDumbbell} className="text-[10px]" />
                 {recipe.difficulty}
               </span>
+              {recipe.nutriscore && (
+                <span className={`nutriscore-${recipe.nutriscore} text-[9px] font-bold w-5 h-5 rounded flex items-center justify-center`}>
+                  {recipe.nutriscore}
+                </span>
+              )}
+              {recipe.calories && (
+                <span className="text-gray-300">{recipe.calories} kcal</span>
+              )}
             </div>
 
             <div className="flex flex-wrap gap-1.5 mb-4">
@@ -78,7 +95,7 @@ export default function RecipeCard({ recipe, flipped, onFlip }) {
             </div>
 
             <p className="text-xs font-semibold mb-2 uppercase tracking-wide text-gray-800">Ingredients</p>
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 mb-4">
               {recipe.ingredients.map((ing, i) => (
                 <div key={i} className="flex items-center gap-2 text-sm text-gray-600">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#005b52] flex-shrink-0" />
@@ -87,7 +104,23 @@ export default function RecipeCard({ recipe, flipped, onFlip }) {
               ))}
             </div>
 
-            <p className="text-[10px] mt-5 text-center flex items-center justify-center gap-1 text-gray-400">
+            {recipe.steps && recipe.steps.length > 0 && (
+              <>
+                <p className="text-xs font-semibold mb-2 uppercase tracking-wide text-gray-800">Etapes</p>
+                <div className="space-y-2 mb-3">
+                  {recipe.steps.map((step, i) => (
+                    <div key={i} className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-[#005b52] text-white text-[9px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
+                        {i + 1}
+                      </span>
+                      <p className="text-xs text-gray-500 leading-relaxed">{step}</p>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            <p className="text-[10px] mt-2 text-center flex items-center justify-center gap-1 text-gray-400">
               <FontAwesomeIcon icon={faRotate} className="text-[8px]" />
               Appuie pour retourner
             </p>

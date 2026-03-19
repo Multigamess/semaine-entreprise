@@ -13,7 +13,7 @@ const tabs = [
   { id: "profile", label: "Profil", icon: faUser },
 ];
 
-export default function Navbar({ activeTab, onTabChange, onPostClick }) {
+export default function Navbar({ activeTab, onTabChange, onPostClick, darkMode }) {
   const showPostButton = activeTab === "friends";
   const tabRefs = useRef([]);
   const [indicatorStyle, setIndicatorStyle] = useState({});
@@ -32,7 +32,13 @@ export default function Navbar({ activeTab, onTabChange, onPostClick }) {
   }, [activeTab]);
 
   return (
-    <nav className="absolute bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-t border-[#005b52]/15">
+    <nav
+      className="absolute bottom-0 left-0 right-0 z-50 backdrop-blur-md border-t"
+      style={{
+        backgroundColor: darkMode ? "rgba(12,17,23,0.9)" : "rgba(255,255,255,0.9)",
+        borderColor: darkMode ? "var(--border-color)" : "rgba(0,91,82,0.15)",
+      }}
+    >
       {showPostButton && (
         <div className="absolute -top-16 left-1/2 -translate-x-1/2 z-50">
           <button
