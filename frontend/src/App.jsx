@@ -176,10 +176,11 @@ function App() {
 
   const header = (
     <div
-      className="backdrop-blur-sm border-b px-5 pt-[max(env(safe-area-inset-top),3.5rem)] pb-3 flex items-center justify-center relative overflow-hidden"
+      className="backdrop-blur-sm border-b px-5 pb-3 flex items-center justify-center relative overflow-hidden"
       style={{
         backgroundColor: darkMode ? "var(--header-bg)" : "rgba(255,255,255,0.8)",
         borderColor: darkMode ? "var(--border-color)" : "rgba(134,188,37,0.15)",
+        paddingTop: "var(--header-top, 0.75rem)",
       }}
     >
       <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: darkMode ? "linear-gradient(90deg, transparent, var(--brand), transparent)" : "linear-gradient(90deg, transparent, #86BC25, transparent)" }} />
