@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheckCircle,
@@ -6,8 +7,9 @@ import {
   faXmark,
   faClock,
   faDumbbell,
-  faMagnifyingGlass,
+  faBookmark,
 } from "@fortawesome/free-solid-svg-icons";
+import { faBookmark as faBookmarkOutline } from "@fortawesome/free-regular-svg-icons";
 import { creators, creatorFeedPosts, creatorRecipes } from "../data/sampleData";
 
 const TYPE_LABELS = { chef: "Chef", influenceur: "Influenceur", restaurateur: "Restaurateur" };
@@ -20,69 +22,163 @@ const COOKING_REACTIONS = [
   { emoji: "💪", label: "Proteine" },
 ];
 
-function CreatorPostReactions({ likes }) {
+function CreatorPost({ post, creator, recipe, onRecipeClick, onSelectCreator, isSaved, onToggleSave }) {
   const [selected, setSelected] = useState(null);
   const [bouncing, setBouncing] = useState(null);
+  const [floatingEmoji, setFloatingEmoji] = useState(null);
   const [counts] = useState(() =>
-    COOKING_REACTIONS.map(() => Math.floor(likes / COOKING_REACTIONS.length) + Math.floor(Math.random() * 5))
+    COOKING_REACTIONS.map(() => Math.floor(post.likes / COOKING_REACTIONS.length) + Math.floor(Math.random() * 5))
   );
 
   function handleTap(i) {
     const wasActive = selected === i;
-    setSelected(wasActive ? null : i);
-    if (!wasActive) {
+    if (wasActive) {
+      setSelected(null);
+    } else {
+      setSelected(i);
       setBouncing(i);
-      setTimeout(() => setBouncing(null), 500);
+      setFloatingEmoji(COOKING_REACTIONS[i].emoji);
+      setTimeout(() => setBouncing(null), 400);
+      setTimeout(() => setFloatingEmoji(null), 900);
     }
   }
 
   return (
-    <div className="flex items-center gap-1.5">
-      {COOKING_REACTIONS.map((r, i) => {
-        const isActive = selected === i;
-        const count = counts[i] + (isActive ? 1 : 0);
-        return (
-          <button
-            key={i}
-            onClick={() => handleTap(i)}
-            className={`flex items-center gap-1 rounded-full px-2 py-1 tap-scale ${
-              isActive
-                ? "bg-[#005b52]/10 border border-[#005b52]/30"
-                : "bg-gray-50 border border-transparent"
-            }`}
-            style={{ transition: "background-color 0.25s ease, border-color 0.25s ease" }}
-          >
-            <span className={`text-sm ${bouncing === i ? "animate-emoji-bounce" : ""}`}>{r.emoji}</span>
+    <article className="px-5 py-4">
+      <div className="flex items-center gap-3 mb-3">
+        <button onClick={() => onSelectCreator(creator.id)} className="flex items-center gap-3 flex-1 text-left tap-scale">
+          <img src={creator.avatar} alt={creator.name} className="w-9 h-9 rounded-full object-cover ring-2 ring-[#86BC25]/15" />
+          <div className="flex-1">
+            <div className="flex items-center gap-1.5">
+              <p className="text-sm font-semibold text-gray-800">{creator.name}</p>
+              {creator.verified && <FontAwesomeIcon icon={faCheckCircle} className="text-[#86BC25] text-[10px]" />}
+            </div>
             <span
-              className={`text-[11px] font-medium ${isActive ? "text-[#005b52]" : "text-gray-400"}`}
-              style={{ transition: "color 0.2s ease" }}
+              className="text-[10px] font-medium px-2 py-0.5 rounded-full"
+              style={{ backgroundColor: creator.theme.secondary, color: creator.theme.primary }}
             >
-              {count}
+              {TYPE_LABELS[creator.type]}
             </span>
+          </div>
+        </button>
+        {recipe && (
+          <button
+            onClick={() => onRecipeClick(post.recipeId)}
+            className="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium tap-scale text-[#86BC25] border border-[#86BC25]/30 hover:bg-[#86BC25]/10"
+          >
+            <FontAwesomeIcon icon={faUtensils} className="text-[10px]" />
+            Recette
           </button>
-        );
-      })}
-    </div>
+        )}
+      </div>
+
+      <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden bg-gray-50">
+        <img src={post.image} alt="" className="w-full h-full object-cover" />
+
+        {floatingEmoji && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <span className="text-5xl animate-heart-burst drop-shadow-lg">{floatingEmoji}</span>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-3">
+        <div className="flex items-center gap-1.5">
+          {COOKING_REACTIONS.map((r, i) => {
+            const isActive = selected === i;
+            const count = counts[i] + (isActive ? 1 : 0);
+            return (
+              <button
+                key={i}
+                onClick={() => handleTap(i)}
+                className={`flex items-center gap-1 rounded-full px-2 py-1 tap-scale ${
+                  isActive
+                    ? "bg-[#86BC25]/10 border border-[#86BC25]/30"
+                    : "bg-gray-50 border border-transparent"
+                }`}
+                style={{ transition: "background-color 0.25s ease, border-color 0.25s ease" }}
+              >
+                <span className={`text-sm ${bouncing === i ? "animate-emoji-bounce" : ""}`}>{r.emoji}</span>
+                <span
+                  className={`text-[11px] font-medium ${isActive ? "text-[#86BC25]" : "text-gray-400"}`}
+                  style={{ transition: "color 0.2s ease" }}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+
+          {recipe && (
+            <button
+              onClick={() => onToggleSave(post.recipeId)}
+              className="ml-auto tap-scale"
+              style={{ transition: "transform 0.2s ease" }}
+            >
+              <FontAwesomeIcon
+                icon={isSaved ? faBookmark : faBookmarkOutline}
+                className={`text-base ${isSaved ? "text-[#86BC25] animate-pop-in" : "text-gray-300"}`}
+                style={{ "--delay": "0ms", transition: "color 0.25s ease" }}
+              />
+            </button>
+          )}
+        </div>
+      </div>
+
+      <p className="mt-2 text-sm leading-relaxed text-gray-600">{post.caption}</p>
+    </article>
   );
 }
 
-export default function CreatorsPage({ onSelectCreator }) {
+export default function CreatorsPage({ onSelectCreator, searchQuery = "", savedRecipes = [], onToggleSave }) {
   const creatorsMap = Object.fromEntries(creators.map((c) => [c.id, c]));
   const recipesMap = Object.fromEntries(creatorRecipes.map((r) => [r.id, r]));
   const [showRecipe, setShowRecipe] = useState(null);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const searchInputRef = useRef(null);
+
+  /* Swipe-down-to-dismiss */
+  const [sheetDragY, setSheetDragY] = useState(0);
+  const [sheetDismissing, setSheetDismissing] = useState(false);
+  const [sheetAnimated, setSheetAnimated] = useState(false);
+  const sheetTouch = useRef({ startY: 0, dragging: false });
+  const sheetRef = useRef(null);
+
+  function sheetTouchStart(e) {
+    e.stopPropagation();
+    const el = sheetRef.current;
+    if (el && el.scrollTop <= 0) {
+      sheetTouch.current.startY = e.touches[0].clientY;
+      sheetTouch.current.dragging = true;
+    }
+  }
+  function sheetTouchMove(e) {
+    e.stopPropagation();
+    if (!sheetTouch.current.dragging) return;
+    const dy = e.touches[0].clientY - sheetTouch.current.startY;
+    if (dy > 0) {
+      e.preventDefault();
+      setSheetDragY(dy);
+    }
+  }
+  function sheetTouchEnd(e) {
+    e.stopPropagation();
+    if (!sheetTouch.current.dragging) return;
+    sheetTouch.current.dragging = false;
+    if (sheetDragY > 100) {
+      setSheetDismissing(true);
+      setTimeout(() => { setShowRecipe(null); setSheetDragY(0); setSheetDismissing(false); setSheetAnimated(false); }, 250);
+    } else {
+      setSheetDragY(0);
+    }
+  }
+
+  function openRecipe(id) {
+    setSheetAnimated(false);
+    setShowRecipe(id);
+  }
 
   const activeRecipe = showRecipe ? recipesMap[showRecipe] : null;
 
-  useEffect(() => {
-    if (searchOpen && searchInputRef.current) {
-      searchInputRef.current.focus();
-    }
-  }, [searchOpen]);
-
-  // Filter posts based on search
+  // Filter posts based on search query from parent
   const filteredPosts = searchQuery.trim()
     ? creatorFeedPosts.filter((post) => {
         const creator = creatorsMap[post.creatorId];
@@ -97,63 +193,21 @@ export default function CreatorsPage({ onSelectCreator }) {
       })
     : creatorFeedPosts;
 
-  function toggleSearch() {
-    if (searchOpen) {
-      setSearchOpen(false);
-      setSearchQuery("");
-    } else {
-      setSearchOpen(true);
-    }
-  }
+  // Determine animation class for sheet
+  let sheetAnim = "";
+  if (sheetDismissing) sheetAnim = "animate-slide-down";
+  else if (!sheetAnimated && sheetDragY === 0) sheetAnim = "animate-slide-up";
 
   return (
     <div>
-      {/* Floating search button / search bar */}
-      <div className="px-5 pt-3 pb-1">
-        <div className="relative flex items-center">
-          {searchOpen ? (
-            <div className="w-full flex items-center gap-2 animate-search-expand">
-              <div className="flex-1 relative">
-                <FontAwesomeIcon
-                  icon={faMagnifyingGlass}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#005b52] text-xs"
-                />
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Chercher une recette, un createur..."
-                  className="w-full bg-[#005b52]/8 text-sm text-gray-800 rounded-xl pl-9 pr-4 py-2.5 placeholder-gray-400 outline-none focus:ring-2 focus:ring-[#005b52]/30 border border-[#005b52]/15"
-                  style={{ transition: "all 0.3s ease" }}
-                />
-              </div>
-              <button
-                onClick={toggleSearch}
-                className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center tap-scale flex-shrink-0"
-              >
-                <FontAwesomeIcon icon={faXmark} className="text-sm text-gray-500" />
-              </button>
-            </div>
-          ) : (
-            <div className="flex justify-end w-full">
-              <button
-                onClick={toggleSearch}
-                className="w-11 h-11 rounded-full bg-[#005b52] text-white shadow-lg shadow-[#005b52]/20 flex items-center justify-center tap-scale hover:shadow-[#005b52]/35"
-                style={{ transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)" }}
-              >
-                <FontAwesomeIcon icon={faMagnifyingGlass} className="text-sm" />
-              </button>
-            </div>
-          )}
-        </div>
-
-        {searchQuery && (
-          <p className="text-[11px] text-gray-400 mt-2 animate-fade-in-up" style={{ "--delay": "0ms" }}>
+      {/* Search results count */}
+      {searchQuery && (
+        <div className="px-5 pt-3 pb-1">
+          <p className="text-[11px] text-gray-400 animate-fade-in-up" style={{ "--delay": "0ms" }}>
             {filteredPosts.length} resultat{filteredPosts.length !== 1 ? "s" : ""} pour &ldquo;{searchQuery}&rdquo;
           </p>
-        )}
-      </div>
+        </div>
+      )}
 
       <div>
         {filteredPosts.map((post, postIndex) => {
@@ -162,51 +216,17 @@ export default function CreatorsPage({ onSelectCreator }) {
           const recipe = post.recipeId ? recipesMap[post.recipeId] : null;
 
           return (
-            <article
-              key={post.id}
-              className="px-5 py-4 stagger-item"
-              style={{ "--stagger": `${postIndex * 120}ms` }}
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <button onClick={() => onSelectCreator(creator.id)} className="flex items-center gap-3 flex-1 text-left tap-scale">
-                  <img src={creator.avatar} alt={creator.name} className="w-9 h-9 rounded-full object-cover ring-2 ring-[#005b52]/15" />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-1.5">
-                      <p className="text-sm font-semibold text-gray-800">{creator.name}</p>
-                      {creator.verified && <FontAwesomeIcon icon={faCheckCircle} className="text-[#005b52] text-[10px]" />}
-                    </div>
-                    <span
-                      className="text-[10px] font-medium px-2 py-0.5 rounded-full"
-                      style={{
-                        backgroundColor: creator.theme.secondary,
-                        color: creator.theme.primary,
-                      }}
-                    >
-                      {TYPE_LABELS[creator.type]}
-                    </span>
-                  </div>
-                </button>
-                {recipe && (
-                  <button
-                    onClick={() => setShowRecipe(post.recipeId)}
-                    className="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium tap-scale text-[#005b52] border border-[#005b52]/30 hover:bg-[#005b52]/10"
-                  >
-                    <FontAwesomeIcon icon={faUtensils} className="text-[10px]" />
-                    Recette
-                  </button>
-                )}
-              </div>
-
-              <div className="w-full aspect-[4/5] rounded-2xl overflow-hidden bg-gray-50">
-                <img src={post.image} alt="" className="w-full h-full object-cover" />
-              </div>
-
-              <div className="mt-3">
-                <CreatorPostReactions likes={post.likes} />
-              </div>
-
-              <p className="mt-2 text-sm leading-relaxed text-gray-600">{post.caption}</p>
-            </article>
+            <div key={post.id} className="stagger-item" style={{ "--stagger": `${postIndex * 120}ms` }}>
+              <CreatorPost
+                post={post}
+                creator={creator}
+                recipe={recipe}
+                onRecipeClick={openRecipe}
+                onSelectCreator={onSelectCreator}
+                isSaved={post.recipeId ? savedRecipes.includes(post.recipeId) : false}
+                onToggleSave={onToggleSave}
+              />
+            </div>
           );
         })}
 
@@ -219,17 +239,33 @@ export default function CreatorsPage({ onSelectCreator }) {
         )}
       </div>
 
-      {/* Recipe overlay */}
-      {activeRecipe && (
-        <div className="fixed inset-0 z-[100] bg-black/30 flex items-end justify-center animate-backdrop" onClick={() => setShowRecipe(null)}>
-          <div className="bg-white w-full max-w-lg rounded-t-[1.5rem] p-6 pb-10 animate-slide-up max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="w-10 h-1 rounded-full mx-auto mb-5 bg-gray-200" />
+      {/* Recipe overlay — portaled to #root to stay within phone frame */}
+      {activeRecipe && createPortal(
+        <div
+          className="absolute inset-0 z-[100] bg-black/30 flex items-end justify-center animate-backdrop"
+          onClick={() => { setShowRecipe(null); setSheetAnimated(false); }}
+          style={{ opacity: sheetDragY > 0 ? Math.max(0.2, 1 - sheetDragY / 400) : undefined }}
+        >
+          <div
+            ref={sheetRef}
+            className={`relative bg-white w-full rounded-t-[1.5rem] p-6 pb-10 max-h-[85vh] overflow-y-auto ${sheetAnim}`}
+            onClick={(e) => e.stopPropagation()}
+            onTouchStart={sheetTouchStart}
+            onTouchMove={sheetTouchMove}
+            onTouchEnd={sheetTouchEnd}
+            onAnimationEnd={() => { if (!sheetDismissing) setSheetAnimated(true); }}
+            style={{
+              transform: sheetDragY > 0 && !sheetDismissing ? `translateY(${sheetDragY}px)` : undefined,
+              transition: sheetDragY > 0 ? "none" : "transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)",
+            }}
+          >
+            <div className="w-10 h-1 rounded-full mx-auto mb-5 bg-gray-200 cursor-grab" />
 
-            <button onClick={() => setShowRecipe(null)} className="absolute top-6 right-6 w-7 h-7 rounded-full border border-gray-200 flex items-center justify-center tap-scale">
+            <button onClick={() => { setShowRecipe(null); setSheetAnimated(false); }} className="absolute top-4 right-4 w-7 h-7 rounded-full border border-gray-200 flex items-center justify-center tap-scale">
               <FontAwesomeIcon icon={faXmark} className="text-sm text-gray-400" />
             </button>
 
-            <p className="text-[11px] text-[#005b52] font-medium uppercase tracking-wider mb-1">Recette du createur</p>
+            <p className="text-[11px] text-[#86BC25] font-medium uppercase tracking-wider mb-1">Recette du createur</p>
             <h3 className="text-lg font-bold mb-3 text-gray-800">{activeRecipe.name}</h3>
 
             <div className="flex items-center gap-3 mb-4">
@@ -251,7 +287,7 @@ export default function CreatorsPage({ onSelectCreator }) {
 
             <div className="flex flex-wrap gap-1.5 mb-4">
               {activeRecipe.tags.map((tag, i) => (
-                <span key={tag} className="bg-[#005b52]/10 text-[#005b52] border border-[#005b52]/20 text-xs font-medium px-2.5 py-1 rounded-full animate-pop-in" style={{ "--delay": `${i * 40}ms` }}>{tag}</span>
+                <span key={tag} className="bg-[#86BC25]/10 text-[#86BC25] border border-[#86BC25]/20 text-xs font-medium px-2.5 py-1 rounded-full animate-pop-in" style={{ "--delay": `${i * 40}ms` }}>{tag}</span>
               ))}
             </div>
 
@@ -268,7 +304,7 @@ export default function CreatorsPage({ onSelectCreator }) {
                 <div className="space-y-2 mb-4">
                   {activeRecipe.steps.map((step, i) => (
                     <div key={i} className="flex items-start gap-3 animate-pop-in" style={{ "--delay": `${200 + i * 50}ms` }}>
-                      <div className="w-6 h-6 rounded-full bg-[#005b52] flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <div className="w-6 h-6 rounded-full bg-[#86BC25] flex items-center justify-center flex-shrink-0 mt-0.5">
                         <span className="text-white text-[10px] font-bold">{i + 1}</span>
                       </div>
                       <p className="text-sm text-gray-600 leading-relaxed">{step}</p>
@@ -280,7 +316,8 @@ export default function CreatorsPage({ onSelectCreator }) {
 
             <img src={activeRecipe.image} alt={activeRecipe.name} className="w-full h-36 object-cover rounded-xl animate-img-reveal" />
           </div>
-        </div>
+        </div>,
+        document.getElementById('root')
       )}
     </div>
   );

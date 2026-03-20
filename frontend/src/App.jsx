@@ -5,7 +5,7 @@ import FriendsPage from "./pages/FriendsPage";
 import CreatorsPage from "./pages/CreatorsPage";
 import ProfilePage from "./pages/ProfilePage";
 import CreatorProfilePage from "./pages/CreatorProfilePage";
-import { creators, profileUser, userWeeklyRealization } from "./data/sampleData";
+import { creators, profileUser } from "./data/sampleData";
 import { createPost, fetchPosts } from "./lib/posts";
 
 const TABS = ["friends", "creators", "profile"];
@@ -18,9 +18,45 @@ function App() {
     try { return localStorage.getItem("bonapp-dark") === "true"; } catch { return false; }
   });
 
-  const [userPost, setUserPost] = useState(userWeeklyRealization);
-  const [hasPosted, setHasPosted] = useState(true);
+  // Sync dark class on #root so portaled overlays inherit dark mode
+  useEffect(() => {
+    const root = document.getElementById("root");
+    if (darkMode) root.classList.add("dark");
+    else root.classList.remove("dark");
+  }, [darkMode]);
+
   const [dbPosts, setDbPosts] = useState([]);
+
+  // Search state — lifted here so Navbar (outside transform) can render the FAB
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Saved/bookmarked recipes — persisted in localStorage
+  const [savedRecipes, setSavedRecipes] = useState(() => {
+    try {
+      const stored = localStorage.getItem("bonapp-saved");
+      return stored ? JSON.parse(stored) : [];
+    } catch { return []; }
+  });
+
+  function toggleSaveRecipe(recipeId) {
+    setSavedRecipes((prev) => {
+      const next = prev.includes(recipeId)
+        ? prev.filter((id) => id !== recipeId)
+        : [...prev, recipeId];
+      try { localStorage.setItem("bonapp-saved", JSON.stringify(next)); } catch {}
+      return next;
+    });
+  }
+
+  function toggleSearch() {
+    if (searchOpen) {
+      setSearchOpen(false);
+      setSearchQuery("");
+    } else {
+      setSearchOpen(true);
+    }
+  }
 
   function toggleDarkMode() {
     setDarkMode((prev) => {
@@ -53,28 +89,18 @@ function App() {
     setSelectedCreator(null);
     setActiveTab(tab);
     setDragX(0);
+    // Close search when switching tabs
+    if (tab !== "creators") {
+      setSearchOpen(false);
+      setSearchQuery("");
+    }
   }
 
   async function handlePublish({ mainImage, selfieImage, caption, recipeId }) {
-    // 1. Instant local UI update
-    const localPost = {
-      id: Date.now(),
-      user: { name: "Toi", avatar: profileUser.avatar },
-      recipeId,
-      mainImage,
-      selfieImage,
-      caption,
-      reactions: [],
-      time: "A l'instant",
-    };
-    setUserPost(localPost);
-    setHasPosted(true);
     setShowCamera(false);
-
-    // 2. Persist to Supabase in background
+    // Persist to Supabase in background
     const savedPost = await createPost({ mainImage, selfieImage, caption, recipeId });
     if (savedPost) {
-      // Add to dbPosts so it shows if user reloads
       setDbPosts((prev) => [savedPost, ...prev]);
     }
   }
@@ -140,7 +166,7 @@ function App() {
         <div className="flex-1 overflow-y-auto pb-28 pt-14">
           <CreatorProfilePage creator={creatorsMap[selectedCreator]} onBack={handleBackFromCreator} />
         </div>
-        <Navbar activeTab={activeTab} onTabChange={handleTabChange} onPostClick={() => setShowCamera(true)} darkMode={darkMode} />
+        <Navbar activeTab={activeTab} onTabChange={handleTabChange} onPostClick={() => setShowCamera(true)} darkMode={darkMode} searchOpen={searchOpen} onToggleSearch={toggleSearch} searchQuery={searchQuery} onSearchChange={setSearchQuery} />
         {showCamera && <CameraOverlay onClose={() => setShowCamera(false)} onPublish={handlePublish} />}
       </div>
     );
@@ -153,12 +179,12 @@ function App() {
       className="backdrop-blur-sm border-b px-5 pt-[max(env(safe-area-inset-top),3.5rem)] pb-3 flex items-center justify-center relative overflow-hidden"
       style={{
         backgroundColor: darkMode ? "var(--header-bg)" : "rgba(255,255,255,0.8)",
-        borderColor: darkMode ? "var(--border-color)" : "rgba(0,91,82,0.15)",
+        borderColor: darkMode ? "var(--border-color)" : "rgba(134,188,37,0.15)",
       }}
     >
-      <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ backgroundColor: darkMode ? "var(--brand)" : "#005b52" }} />
+      <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: darkMode ? "linear-gradient(90deg, transparent, var(--brand), transparent)" : "linear-gradient(90deg, transparent, #86BC25, transparent)" }} />
       <h1 className="text-4xl font-extrabold tracking-tight">
-        <span style={{ color: darkMode ? "var(--brand)" : "#005b52" }}>bon</span>
+        <span style={{ color: darkMode ? "var(--brand)" : "#86BC25" }}>bon</span>
         <span style={{ color: darkMode ? "var(--text-primary)" : undefined }} className="text-gray-800">app&apos;</span>
       </h1>
     </div>
@@ -184,20 +210,20 @@ function App() {
         >
           <div className="w-full h-full flex-shrink-0 overflow-y-auto pb-28">
             {header}
-            <FriendsPage hasPosted={hasPosted} userPost={userPost} dbPosts={dbPosts} onPostClick={() => setShowCamera(true)} />
+            <FriendsPage />
           </div>
           <div className="w-full h-full flex-shrink-0 overflow-y-auto pb-28">
             {header}
-            <CreatorsPage onSelectCreator={handleSelectCreator} />
+            <CreatorsPage onSelectCreator={handleSelectCreator} searchQuery={searchQuery} savedRecipes={savedRecipes} onToggleSave={toggleSaveRecipe} />
           </div>
           <div className="w-full h-full flex-shrink-0 overflow-y-auto pb-28">
             {header}
-            <ProfilePage darkMode={darkMode} onToggleDark={toggleDarkMode} />
+            <ProfilePage darkMode={darkMode} onToggleDark={toggleDarkMode} savedRecipes={savedRecipes} onToggleSave={toggleSaveRecipe} />
           </div>
         </div>
       </div>
 
-      <Navbar activeTab={activeTab} onTabChange={handleTabChange} onPostClick={() => setShowCamera(true)} darkMode={darkMode} />
+      <Navbar activeTab={activeTab} onTabChange={handleTabChange} onPostClick={() => setShowCamera(true)} darkMode={darkMode} searchOpen={searchOpen} onToggleSearch={toggleSearch} searchQuery={searchQuery} onSearchChange={setSearchQuery} />
       {showCamera && <CameraOverlay onClose={() => setShowCamera(false)} onPublish={handlePublish} />}
     </div>
   );

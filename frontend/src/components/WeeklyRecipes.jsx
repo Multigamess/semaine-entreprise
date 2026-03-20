@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import RecipeCard from "./RecipeCard";
 
 export default function WeeklyRecipes({ recipes }) {
@@ -7,15 +7,28 @@ export default function WeeklyRecipes({ recipes }) {
   const [dragX, setDragX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const touchRef = useRef({ startX: 0, startY: 0, locked: null });
+  const cardRefs = useRef([]);
 
   function goTo(index) {
     setFlippedIndex(null);
     setCurrent(index);
   }
 
-  function handleFlip(index) {
-    setFlippedIndex(flippedIndex === index ? null : index);
-  }
+  const handleFlip = useCallback((index) => {
+    const willFlip = flippedIndex !== index;
+    setFlippedIndex(willFlip ? index : null);
+
+    // Scroll back face to top when flipping
+    if (willFlip) {
+      requestAnimationFrame(() => {
+        const card = cardRefs.current[index];
+        if (card) {
+          const backScroller = card.querySelector(".back-scroll");
+          if (backScroller) backScroller.scrollTop = 0;
+        }
+      });
+    }
+  }, [flippedIndex]);
 
   // Swipe handlers with stopPropagation to prevent page-level swipe
   function handleTouchStart(e) {
@@ -88,7 +101,7 @@ export default function WeeklyRecipes({ recipes }) {
           }}
         >
           {recipes.map((recipe, i) => (
-            <div key={recipe.id} className="w-full flex-shrink-0">
+            <div key={recipe.id} className="w-full flex-shrink-0" ref={(el) => (cardRefs.current[i] = el)}>
               <RecipeCard recipe={recipe} flipped={flippedIndex === i} onFlip={() => handleFlip(i)} />
             </div>
           ))}
@@ -101,7 +114,7 @@ export default function WeeklyRecipes({ recipes }) {
             key={i}
             onClick={() => goTo(i)}
             className={`h-1.5 rounded-full transition-all duration-300 ${
-              i === current ? "w-5 bg-[#005b52]" : "w-1.5 bg-gray-200"
+              i === current ? "w-5 bg-[#86BC25]" : "w-1.5 bg-gray-200"
             }`}
           />
         ))}

@@ -63,11 +63,14 @@ export default function RecipeCard({ recipe, flipped, onFlip }) {
         </div>
 
         {/* Back Face */}
-        <div className="absolute inset-0 backface-hidden rotate-y-180 rounded-[2rem] overflow-hidden flex flex-col bg-white border border-gray-100">
-          <div className="flex-1 px-5 pt-6 overflow-y-auto pb-4">
-            <h3 className="text-lg font-bold mb-1 text-gray-800">{recipe.name}</h3>
+        <div
+          className="absolute inset-0 backface-hidden rotate-y-180 rounded-[2rem] overflow-hidden flex flex-col border border-gray-100"
+          style={{ backgroundColor: "var(--bg-card, #FFFFFF)" }}
+        >
+          <div className="back-scroll flex-1 px-5 pt-6 overflow-y-auto pb-4">
+            <h3 className="text-lg font-bold mb-1" style={{ color: "var(--text-primary, #1F2937)" }}>{recipe.name}</h3>
 
-            <div className="flex items-center gap-3 text-xs mb-4 text-gray-400">
+            <div className="flex items-center gap-3 text-xs mb-4" style={{ color: "var(--text-muted, #9CA3AF)" }}>
               <span className="flex items-center gap-1">
                 <FontAwesomeIcon icon={faClock} className="text-[10px]" />
                 {recipe.time}
@@ -82,23 +85,23 @@ export default function RecipeCard({ recipe, flipped, onFlip }) {
                 </span>
               )}
               {recipe.calories && (
-                <span className="text-gray-300">{recipe.calories} kcal</span>
+                <span style={{ color: "var(--text-faint, #D1D5DB)" }}>{recipe.calories} kcal</span>
               )}
             </div>
 
             <div className="flex flex-wrap gap-1.5 mb-4">
               {recipe.tags.map((tag) => (
-                <span key={tag} className="text-[10px] font-medium px-2.5 py-1 rounded-full bg-[#005b52]/10 text-[#005b52]">
+                <span key={tag} className="text-[10px] font-medium px-2.5 py-1 rounded-full" style={{ backgroundColor: "var(--brand-light, rgba(134,188,37,0.08))", color: "var(--brand, #86BC25)" }}>
                   {tag}
                 </span>
               ))}
             </div>
 
-            <p className="text-xs font-semibold mb-2 uppercase tracking-wide text-gray-800">Ingredients</p>
+            <p className="text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: "var(--text-primary, #1F2937)" }}>Ingredients</p>
             <div className="space-y-1.5 mb-4">
               {recipe.ingredients.map((ing, i) => (
-                <div key={i} className="flex items-center gap-2 text-sm text-gray-600">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#005b52] flex-shrink-0" />
+                <div key={i} className="flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary, #6B7280)" }}>
+                  <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: "var(--brand, #86BC25)" }} />
                   {ing}
                 </div>
               ))}
@@ -106,21 +109,21 @@ export default function RecipeCard({ recipe, flipped, onFlip }) {
 
             {recipe.steps && recipe.steps.length > 0 && (
               <>
-                <p className="text-xs font-semibold mb-2 uppercase tracking-wide text-gray-800">Etapes</p>
+                <p className="text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: "var(--text-primary, #1F2937)" }}>Etapes</p>
                 <div className="space-y-2 mb-3">
                   {recipe.steps.map((step, i) => (
                     <div key={i} className="flex items-start gap-2">
-                      <span className="w-5 h-5 rounded-full bg-[#005b52] text-white text-[9px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="w-5 h-5 rounded-full text-white text-[9px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: "var(--brand, #86BC25)" }}>
                         {i + 1}
                       </span>
-                      <p className="text-xs text-gray-500 leading-relaxed">{step}</p>
+                      <p className="text-xs leading-relaxed" style={{ color: "var(--text-muted, #6B7280)" }}>{step}</p>
                     </div>
                   ))}
                 </div>
               </>
             )}
 
-            <p className="text-[10px] mt-2 text-center flex items-center justify-center gap-1 text-gray-400">
+            <p className="text-[10px] mt-2 text-center flex items-center justify-center gap-1" style={{ color: "var(--text-faint, #9CA3AF)" }}>
               <FontAwesomeIcon icon={faRotate} className="text-[8px]" />
               Appuie pour retourner
             </p>

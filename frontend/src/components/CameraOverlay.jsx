@@ -168,7 +168,7 @@ export default function CameraOverlay({ onClose, onPublish }) {
       {publishing && (
         <div className="absolute inset-0 z-[210] bg-black/60 flex items-center justify-center">
           <div className="text-center animate-fade-in-up">
-            <div className="w-12 h-12 rounded-full bg-[#005b52] flex items-center justify-center mx-auto mb-3">
+            <div className="w-12 h-12 rounded-full bg-[#86BC25] flex items-center justify-center mx-auto mb-3">
               <FontAwesomeIcon icon={faPaperPlane} className="text-white text-lg" />
             </div>
             <p className="text-white font-semibold">Publication...</p>
@@ -222,7 +222,7 @@ export default function CameraOverlay({ onClose, onPublish }) {
             <div className="text-center">
               <FontAwesomeIcon icon={faCamera} className="text-white/30 text-4xl mb-3" />
               <p className="text-white/50 text-sm">{cameraError}</p>
-              <button onClick={() => startCamera(facing)} className="mt-3 text-[#005b52] text-sm font-medium">
+              <button onClick={() => startCamera(facing)} className="mt-3 text-[#86BC25] text-sm font-medium">
                 Reessayer
               </button>
             </div>
@@ -264,7 +264,7 @@ export default function CameraOverlay({ onClose, onPublish }) {
               onClick={() => setSelectedRecipe(i)}
               className={`text-xs font-medium px-3 py-1.5 rounded-full transition-all duration-200 ${
                 i === selectedRecipe
-                  ? "bg-[#005b52] text-white"
+                  ? "bg-[#86BC25] text-white"
                   : "bg-white/10 text-white/50"
               }`}
             >
@@ -283,7 +283,7 @@ export default function CameraOverlay({ onClose, onPublish }) {
                 value={caption}
                 onChange={(e) => setCaption(e.target.value)}
                 placeholder="Ajoute une legende..."
-                className="w-full bg-white/10 text-white text-sm rounded-xl px-4 py-3 placeholder-white/30 outline-none focus:ring-2 focus:ring-[#005b52]/50 transition-all"
+                className="w-full bg-white/10 text-white text-sm rounded-xl px-4 py-3 placeholder-white/30 outline-none focus:ring-2 focus:ring-[#86BC25]/50 transition-all"
               />
             </div>
 
@@ -297,7 +297,7 @@ export default function CameraOverlay({ onClose, onPublish }) {
               <button
                 onClick={handlePublish}
                 disabled={publishing}
-                className="text-white text-sm font-semibold px-8 py-2.5 rounded-full bg-[#005b52] tap-scale flex items-center gap-2"
+                className="text-white text-sm font-semibold px-8 py-2.5 rounded-full bg-[#86BC25] tap-scale flex items-center gap-2"
               >
                 <FontAwesomeIcon icon={faPaperPlane} className="text-xs" />
                 Publier
