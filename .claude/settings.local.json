@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_start",
+      "Bash(npx --version)",
+      "Bash(ls \"C:/Users/hp/Desktop/semaine-entreprise/.claude/worktrees/mystifying-newton/frontend/node_modules/.bin/vite\"*)"
+    ]
+  }
+}

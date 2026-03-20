@@ -1,0 +1,13 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "dev",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["node_modules/vite/bin/vite.js", "--port", "4837", "--host"],
+      "port": 4837,
+      "cwd": "frontend",
+      "env": { "NO_SSL": "1" }
+    }
+  ]
+}

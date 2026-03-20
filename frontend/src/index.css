@@ -1,1 +1,577 @@
 @import "tailwindcss";
+
+/* ============================================
+   DARK MODE CSS CUSTOM PROPERTIES
+   ============================================ */
+:root {
+  --bg-app: #FAFBFF;
+  --bg-card: #FFFFFF;
+  --bg-surface: #F9FAFB;
+  --bg-hover: #F3F4F6;
+  --text-primary: #1F2937;
+  --text-secondary: #6B7280;
+  --text-muted: #9CA3AF;
+  --text-faint: #D1D5DB;
+  --border-color: #F3F4F6;
+  --border-subtle: rgba(0,0,0,0.06);
+  --brand: #86BC25;
+  --brand-light: rgba(134,188,37,0.08);
+  --brand-border: rgba(134,188,37,0.2);
+  --shadow-color: rgba(0,0,0,0.08);
+  --header-bg: rgba(255,255,255,0.8);
+  --overlay-bg: rgba(0,0,0,0.3);
+}
+
+.dark {
+  --bg-app: #111318;
+  --bg-card: #191c24;
+  --bg-surface: #1a2130;
+  --bg-hover: #252a38;
+  --text-primary: #d4dae3;
+  --text-secondary: #7d8590;
+  --text-muted: #5c6370;
+  --text-faint: #3d4250;
+  --border-color: rgba(255,255,255,0.06);
+  --border-subtle: rgba(255,255,255,0.03);
+  --brand: #9dd44a;
+  --brand-light: rgba(134,188,37,0.1);
+  --brand-border: rgba(134,188,37,0.2);
+  --shadow-color: rgba(0,0,0,0.25);
+  --header-bg: rgba(17,19,24,0.92);
+  --overlay-bg: rgba(0,0,0,0.45);
+}
+
+body {
+  margin: 0;
+  background-color: #FFFFFF;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark mode body overrides */
+.dark {
+  color-scheme: dark;
+}
+.dark .bg-white\/80 { background-color: var(--header-bg) !important; }
+.dark .bg-white { background-color: var(--bg-card) !important; }
+.dark .bg-gray-50 { background-color: var(--bg-surface) !important; }
+.dark .text-gray-800 { color: var(--text-primary) !important; }
+.dark .text-gray-600 { color: var(--text-secondary) !important; }
+.dark .text-gray-500 { color: var(--text-secondary) !important; }
+.dark .text-gray-400 { color: var(--text-muted) !important; }
+.dark .text-gray-300 { color: var(--text-faint) !important; }
+.dark .text-gray-900 { color: var(--text-primary) !important; }
+.dark .border-gray-100 { border-color: var(--border-color) !important; }
+.dark .border-gray-200 { border-color: var(--border-color) !important; }
+.dark .bg-gray-100 { background-color: var(--bg-hover) !important; }
+.dark .bg-gray-200 { background-color: var(--bg-hover) !important; }
+
+/* Dark mode transition for all elements */
+.dark-transition,
+.dark-transition * {
+  transition: background-color 0.4s ease, color 0.3s ease, border-color 0.3s ease !important;
+}
+
+/* Root — full viewport on mobile, centered phone frame on desktop */
+#root {
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  position: relative;
+  margin: 0 auto;
+}
+
+/* Desktop: show as phone mockup */
+@media (min-width: 480px) {
+  body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #1a2332 70%, #0f172a 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  #root {
+    width: 393px;
+    height: 852px;
+    border-radius: 47px;
+    box-shadow:
+      0 0 0 3px #1a1a1a,
+      0 0 0 6px #333,
+      0 25px 80px rgba(0,0,0,0.5),
+      0 0 120px rgba(134,188,37,0.06);
+  }
+
+  /* Dynamic Island — desktop only */
+  #root::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 37px;
+    background: #000;
+    border-radius: 20px;
+    z-index: 9999;
+  }
+
+  /* Home indicator — desktop only */
+  #root::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 134px;
+    height: 5px;
+    background: #000;
+    border-radius: 3px;
+    z-index: 9999;
+  }
+}
+
+/* Hide scrollbars */
+#root *::-webkit-scrollbar {
+  display: none;
+}
+#root * {
+  scrollbar-width: none;
+}
+
+/* Smooth scroll for all scrollable containers */
+.overflow-y-auto {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ============================================
+   ANIMATION SYSTEM — Spring-based timings
+   ============================================ */
+
+/* --- Tap & Press --- */
+.tap-scale {
+  transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  will-change: transform;
+}
+.tap-scale:active {
+  transform: scale(0.97);
+}
+
+/* --- Fade In Up (staggered via --delay) --- */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.4s cubic-bezier(0.25, 1, 0.5, 1) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+/* --- Staggered list items --- */
+.stagger-item {
+  opacity: 0;
+  animation: fade-in-up 0.35s cubic-bezier(0.25, 1, 0.5, 1) both;
+  animation-delay: var(--stagger, 0ms);
+}
+
+/* --- Scale in (for overlays, modals) --- */
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-scale-in {
+  animation: scale-in 0.3s cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+
+/* --- Bubble in/out (centered modal) --- */
+@keyframes bubble-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes bubble-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+.animate-bubble-in {
+  animation: bubble-in 0.25s ease-out both;
+}
+.animate-bubble-out {
+  animation: bubble-out 0.2s ease-in both;
+  pointer-events: none;
+}
+
+/* --- Slide up (bottom sheets) --- */
+@keyframes slide-up {
+  from { transform: translateY(100%); opacity: 0.5; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.animate-slide-up {
+  animation: slide-up 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* --- Backdrop fade --- */
+@keyframes backdrop-fade {
+  from { opacity: 0; backdrop-filter: blur(0px); }
+  to { opacity: 1; backdrop-filter: blur(4px); }
+}
+.animate-backdrop {
+  animation: backdrop-fade 0.3s ease-out both;
+}
+
+/* --- Pop / Bounce (reactions, buttons) --- */
+@keyframes pop-in {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.animate-pop-in {
+  animation: pop-in 0.3s cubic-bezier(0.25, 1, 0.5, 1) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+.animate-pop {
+  animation: pop 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* --- Bubble float (decorative) --- */
+@keyframes bubble-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+.animate-float {
+  animation: bubble-float 3s ease-in-out infinite;
+  animation-delay: var(--delay, 0ms);
+}
+
+/* --- Gentle pulse (glow effects) --- */
+@keyframes gentle-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.02); }
+}
+.animate-gentle-pulse {
+  animation: gentle-pulse 2.5s ease-in-out infinite;
+}
+
+/* --- Shimmer loading --- */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* --- Heart burst on double tap --- */
+@keyframes heart-burst {
+  0% { transform: scale(0); opacity: 1; }
+  30% { transform: scale(1.5); opacity: 1; }
+  60% { transform: scale(1.1); opacity: 0.9; }
+  100% { transform: scale(1); opacity: 0; }
+}
+.animate-heart-burst {
+  animation: heart-burst 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* --- Confetti pop (publish success) --- */
+@keyframes confetti-pop {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.animate-confetti-pop {
+  animation: confetti-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* --- Camera overlay --- */
+@keyframes camera-open {
+  from { opacity: 0; transform: scale(1.06); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-camera-open {
+  animation: camera-open 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes shutter-flash {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.animate-shutter-flash {
+  animation: shutter-flash 0.25s ease-out forwards;
+}
+
+/* --- Image reveal (fade in when loaded) --- */
+@keyframes img-reveal {
+  from { opacity: 0; transform: scale(1.03); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-img-reveal {
+  animation: img-reveal 0.45s ease-out both;
+}
+
+/* --- Emoji reaction bounce --- */
+@keyframes emoji-bounce {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+.animate-emoji-bounce {
+  animation: emoji-bounce 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* --- Indicator dot --- */
+@keyframes dot-appear {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.animate-dot {
+  animation: dot-appear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* --- Streak badge wiggle --- */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+.animate-wiggle {
+  animation: wiggle 0.5s ease-in-out;
+}
+
+/* --- Smooth card hover lift --- */
+@keyframes card-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-card-enter {
+  animation: card-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+/* --- Pill badge slide in --- */
+@keyframes pill-in {
+  from { opacity: 0; transform: translateX(-8px) scale(0.9); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+.animate-pill-in {
+  animation: pill-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+/* --- Soft count up --- */
+@keyframes count-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+.animate-count-pop {
+  animation: count-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* --- Smooth reveal from below (for sections) --- */
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-reveal-up {
+  animation: reveal-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+/* --- Gradient line shimmer --- */
+@keyframes gradient-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.animate-gradient-flow {
+  background-size: 200% 200%;
+  animation: gradient-flow 4s ease infinite;
+}
+
+/* ============================================
+   3D CARD FLIP
+   ============================================ */
+.perspective-1000 {
+  perspective: 1000px;
+}
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+.flip-transition {
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.flipped {
+  transform: rotateY(180deg);
+}
+
+/* ============================================
+   CALENDAR SLIDE TRANSITIONS
+   ============================================ */
+@keyframes cal-exit-l {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-30%); opacity: 0; }
+}
+@keyframes cal-exit-r {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(30%); opacity: 0; }
+}
+@keyframes cal-enter-l {
+  from { transform: translateX(30%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes cal-enter-r {
+  from { transform: translateX(-30%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.cal-exit-left {
+  animation: cal-exit-l 0.12s ease-in forwards;
+}
+.cal-exit-right {
+  animation: cal-exit-r 0.12s ease-in forwards;
+}
+.cal-enter-left {
+  animation: cal-enter-l 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.cal-enter-right {
+  animation: cal-enter-r 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ============================================
+   GLOBAL SMOOTHNESS
+   ============================================ */
+
+/* Smooth all transitions by default */
+img {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Smooth border/shadow transitions on interactive elements */
+button, a {
+  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Smooth color transitions on everything */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth rounded corners on photo containers */
+.rounded-2xl, .rounded-\[2rem\] {
+  transition: border-radius 0.3s ease;
+}
+
+/* GPU acceleration for animated elements */
+.tap-scale, .stagger-item, .animate-pop-in, .animate-fade-in-up,
+.animate-scale-in, .animate-slide-up, .animate-card-enter {
+  will-change: transform, opacity;
+}
+
+/* Smooth focus rings */
+*:focus-visible {
+  outline: 2px solid var(--brand, #86BC25);
+  outline-offset: 2px;
+  border-radius: 8px;
+  transition: outline-offset 0.15s ease;
+}
+
+/* --- Slide down (dismiss bottom sheets) --- */
+@keyframes slide-down {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(100%); opacity: 0.5; }
+}
+.animate-slide-down {
+  animation: slide-down 0.3s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+/* --- Expand in (compact card expand) --- */
+@keyframes expand-in {
+  from { opacity: 0; max-height: 0; transform: scale(0.98); }
+  to { opacity: 1; max-height: 600px; transform: scale(1); }
+}
+.animate-expand-in {
+  animation: expand-in 0.35s cubic-bezier(0.25, 1, 0.5, 1) both;
+  overflow: hidden;
+}
+
+/* ============================================
+   SEARCH BAR ANIMATION
+   ============================================ */
+@keyframes search-expand {
+  0% { width: 0; opacity: 0; transform: scaleX(0.3); border-radius: 9999px; }
+  60% { width: 105%; opacity: 1; transform: scaleX(1.02); border-radius: 1.2rem; }
+  100% { width: 100%; opacity: 1; transform: scaleX(1); border-radius: 1rem; }
+}
+@keyframes search-collapse {
+  from { width: 100%; opacity: 1; border-radius: 1rem; }
+  to { width: 3rem; opacity: 0; border-radius: 9999px; }
+}
+.animate-search-expand {
+  animation: search-expand 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  transform-origin: left center;
+}
+.animate-search-collapse {
+  animation: search-collapse 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Search FAB bounce-in */
+@keyframes fab-bounce-in {
+  0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+  60% { transform: scale(1.15) rotate(5deg); opacity: 1; }
+  80% { transform: scale(0.95) rotate(-2deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.animate-fab-bounce {
+  animation: fab-bounce-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+/* ============================================
+   NUTRISCORE COLORS
+   ============================================ */
+.nutriscore-A { background-color: #038141; color: white; }
+.nutriscore-B { background-color: #85BB2F; color: white; }
+.nutriscore-C { background-color: #FECB02; color: #1a1a1a; }
+.nutriscore-D { background-color: #EE8100; color: white; }
+.nutriscore-E { background-color: #E63E11; color: white; }
+
+/* ============================================
+   DARK MODE — DEEP OVERRIDES
+   ============================================ */
+.dark [class*="bg-\[#FAFBFF\]"] { background-color: var(--bg-app) !important; }
+.dark .border-b { border-color: var(--border-color) !important; }
+
+/* Dark mode for specific brand-light backgrounds */
+.dark [class*="bg-\[#86BC25\]\/5"],
+.dark [class*="bg-\[#86BC25\]\/8"],
+.dark [class*="bg-\[#86BC25\]\/10"] {
+  background-color: var(--brand-light) !important;
+}
+
+/* Dark mode for card-like surfaces */
+.dark article { background-color: transparent; }
+.dark .rounded-\[2rem\] { background-color: var(--bg-surface); }
+
+/* Dark mode streak badge */
+.dark .from-orange-50 { --tw-gradient-from: #2a1f0d !important; }
+.dark .to-amber-50 { --tw-gradient-to: #2a1f0d !important; }
+.dark .border-orange-100\/50 { border-color: rgba(251,191,36,0.15) !important; }
+.dark .text-orange-600 { color: #fbbf24 !important; }
+
+/* Week card dark mode */
+.dark .week-card { background-color: var(--bg-surface); border-color: var(--border-color); }
+.dark .week-card-empty { background-color: var(--bg-surface); border-color: var(--border-color); }
